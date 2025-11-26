@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>arxiv. Tmsiti</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="author" content="DexignZone">
+    <meta name="robots" content="">
+    <meta name="keywords" content="admin dashboard, admin template, administration, analytics, bootstrap, broker, medical dashboard, modern, property, property admin, real estate, responsive admin dashboard">
+    <meta name="description" content="arxiv - Hujjatlar boshqaruvi tizimi">
+    <meta property="og:title" content="arxiv - Hujjatlar Boshqaruvi">
+    <meta property="og:description" content="arxiv - Hujjatlarni boshqarish va monitoring qilish tizimi">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="image/png" href="images/favicon.png">
+    <link href="vendor/jquery-nice-select/css/nice-select.css" rel="stylesheet">
+    <link rel="stylesheet" href="vendor/dotted-map/css/contrib/jquery.smallipop-0.3.0.min.css" type="text/css" media="all">
+    <link href="css/style.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        .loading-spinner {
+            text-align: center;
+            padding: 20px;
+        }
+        .error-message {
+            display: none;
+        }
+        .department-header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            font-weight: bold;
+        }
+        .documents-section {
+            background-color: #f8f9fa;
+            border-radius: 5px;
+        }
+        .no-categories {
+            text-align: center;
+            color: #6c757d;
+            font-style: italic;
+        }
+        .category-row {
+            cursor: pointer;
+        }
+        .category-row:hover {
+            background-color: #f8f9fa;
+        }
+    </style>
+</head>
+<body>
+
+    <!--*******************
+        Preloader start
+    ********************-->
+    <div id="preloader">
+        <div class="lds-ripple">
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+    <!--*******************
+        Preloader end
+    ********************-->
+
+    <!--**********************************
+        Main wrapper start
+    ***********************************-->
+    <div id="main-wrapper">
+
+        <!--**********************************
+            Nav header start
+        ***********************************-->
+        <div class="nav-header">
+            <a href="index.html" class="brand-logo">
+                <svg width="160" height="44" viewBox="0 0 160 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="0" y="0" width="44" height="44" rx="12" fill="#1A73E8"></rect>
+                    <path d="M14 28V18C14 16.9 14.9 16 16 16H28C29.1 16 30 16.9 30 18V28C30 29.1 29.1 30 28 30H16C14.9 30 14 29.1 14 28Z" stroke="white" stroke-width="2" stroke-linejoin="round"></path>
+                    <path d="M18 20H26" stroke="white" stroke-width="2" stroke-linecap="round"></path>
+                    <path d="M18 24H26" stroke="white" stroke-width="2" stroke-linecap="round"></path>
+                    <text x="60" y="29" font-family="Poppins, sans-serif" font-size="26" font-weight="700" fill="#273240" letter-spacing="0.5">
+                        arxiv.
+                    </text>
+                </svg>
+            </a>
+            <div class="nav-control">
+                <div class="hamburger">
+                    <span class="line"></span><span class="line"></span><span class="line"></span>
+                </div>
+            </div>
+        </div>
+        <!--**********************************
+            Nav header end
+        ***********************************-->
+        
+        <!--**********************************
+            Header start
+        ***********************************-->
+        <div class="header">
+            <div class="header-content">
+                <nav class="navbar navbar-expand">
+                    <div class="collapse navbar-collapse justify-content-between">
+                        <div class="header-left">
+                            <div class="nav-item">
+                                <div class="input-group search-area">
+                                    <input type="text" class="form-control" placeholder="Ma'lumot qidirish" id="searchInput">
+                                    <span class="input-group-text"><a href="javascript:void(0)"><i class="flaticon-381-search-2"></i></a></span>
+                                </div>
+                            </div>
+                        </div>
+                        <ul class="navbar-nav header-right">
+                            <li class="nav-item dropdown notification_dropdown">
+                                <a class="nav-link bell dz-theme-mode" href="javascript:void(0);">
+                                    <i id="icon-light" class="fas fa-sun"></i>
+                                    <i id="icon-dark" class="fas fa-moon"></i>
+                                </a>
+                            </li>
+                            <li class="nav-item dropdown notification_dropdown">
+                                <a class="nav-link" href="javascript:void(0);" role="button" data-bs-toggle="dropdown">
+                                   <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M10.4524 25.6682C11.0605 27.0357 12.409 28 14.0005 28C15.592 28 16.9405 27.0357 17.5487 25.6682C16.4265 25.7231 15.2594 25.76 14.0005 25.76C12.7417 25.76 11.5746 25.723 10.4524 25.6682Z" fill="#737B8B"/>
+                                        <path d="M26.3532 19.74C24.877 17.8785 22.3996 14.2195 22.3996 10.64C22.3996 7.09073 20.1193 3.89758 16.7996 2.72382C16.7593 1.21406 15.5183 0 14.0007 0C12.482 0 11.2422 1.21406 11.2018 2.72382C7.88101 3.89758 5.6007 7.09073 5.6007 10.64C5.6007 14.2207 3.1244 17.8785 1.64712 19.74C1.15433 20.3616 1.00197 21.1825 1.24058 21.9363C1.47354 22.6721 2.05367 23.2422 2.79288 23.4595C4.08761 23.8415 6.20997 24.2715 9.44682 24.491C10.8479 24.5851 12.3543 24.64 14.0008 24.64C15.646 24.64 17.1525 24.5851 18.5535 24.491C21.7915 24.2715 23.9128 23.8415 25.2086 23.4595C25.9478 23.2422 26.5268 22.6722 26.7598 21.9363C26.9983 21.1825 26.8449 20.3616 26.3532 19.74Z" fill="#737B8B"/>
+                                    </svg>
+                                    <span class="badge light text-white bg-primary rounded-circle">4</span>
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-end">
+                                    <div id="DZ_W_Notification1" class="widget-media dz-scroll p-3" style="height:380px;">
+                                        <ul class="timeline">
+                                            <li>
+                                                <div class="timeline-panel">
+                                                    <div class="media me-2">
+                                                        <img alt="image" width="50" src="images/avatar/1.jpg">
+                                                    </div>
+                                                    <div class="media-body">
+                                                        <h6 class="mb-1">Yangi hujjat qo'shildi</h6>
+                                                        <small class="d-block">29 July 2020 - 02:26 PM</small>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                            <li>
+                                                <div class="timeline-panel">
+                                                    <div class="media me-2 media-info">
+                                                        KG
+                                                    </div>
+                                                    <div class="media-body">
+                                                        <h6 class="mb-1">Hisobot yaratildi</h6>
+                                                        <small class="d-block">29 July 2020 - 02:26 PM</small>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                            <li>
+                                                <div class="timeline-panel">
+                                                    <div class="media me-2 media-success">
+                                                        <i class="fa fa-home"></i>
+                                                    </div>
+                                                    <div class="media-body">
+                                                        <h6 class="mb-1">Yangi foydalanuvchi qo'shildi</h6>
+                                                        <small class="d-block">29 July 2020 - 02:26 PM</small>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <a class="all-notification" href="javascript:void(0);">Barcha bildirishnomalar <i class="ti-arrow-end"></i></a>
+                                </div>
+                            </li>
+
+                            <li class="nav-item dropdown header-profile">
+                                <a class="nav-link" href="javascript:void(0);" role="button" data-bs-toggle="dropdown">
+                                    <div class="header-info me-3">
+                                        <span class="fs-18 font-w500 text-end" id="userName">Yuklanmoqda...</span>
+                                        <small class="text-end fs-14 font-w400" id="userPhone">Yuklanmoqda...</small>
+                                    </div>
+                                    <img src="images/profile/pic1.jpg" width="20" alt="" id="userAvatar">
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-end">
+                                    <a href="app-profile.html" class="dropdown-item ai-icon">
+                                        <svg id="icon-user1" xmlns="http://www.w3.org/2000/svg" class="text-primary" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                                        <span class="ms-2">Profil</span>
+                                    </a>
+                                    <a href="email-inbox.html" class="dropdown-item ai-icon">
+                                        <svg id="icon-inbox" xmlns="http://www.w3.org/2000/svg" class="text-success" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                                        <span class="ms-2">Xabarlar</span>
+                                    </a>
+                                    <a href="javascript:void(0);" class="dropdown-item ai-icon" onclick="logout()">
+                                        <svg id="icon-logout" xmlns="http://www.w3.org/2000/svg" class="text-danger" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                                        <span class="ms-2">Chiqish</span>
+                                    </a>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+            </div>
+        </div>
+        <!--**********************************
+            Header end ti-comment-alt
+        ***********************************-->
+        <!-- Logout Confirmation Modal -->
+        <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="logoutModalLabel">Tizimdan chiqish</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="text-center">
+                            <i class="fas fa-sign-out-alt text-danger mb-3" style="font-size: 48px;"></i>
+                            <h4 class="mb-3">Rostan ham tizimdan chiqmoqchimisiz?</h4>
+                            <p class="text-muted">Agar chiqsangiz, qayta kirish uchun login qilishingiz kerak bo'ladi.</p>
+                        </div>
+                    </div>
+                    <div class="modal-footer justify-content-center">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            <i class="fas fa-times me-2"></i>Bekor qilish
+                        </button>
+                        <button type="button" class="btn btn-danger" onclick="confirmLogout()">
+                            <i class="fas fa-sign-out-alt me-2"></i>Ha, chiqish
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--**********************************
+            Sidebar start
+        ***********************************-->
+        <div class="deznav">
+            <div class="deznav-scroll">
+                <ul class="metismenu" id="menu">
+                    <li><a class="has-arrow " href="javascript:void()" aria-expanded="false">
+                            <i class="flaticon-025-dashboard"></i>
+                            <span class="nav-text">Boshqaruv paneli</span>
+                        </a>
+                        <ul aria-expanded="false">
+                            <li><a href="index.html">Bosh sahifa</a></li>
+                            <li><a href="order-list.html">Hujjatlar</a></li>
+                            <li><a href="table-datatable-basic.html">Xodimlar</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a style="color: red;" href="javascript:void(0)" onclick="logout()" aria-expanded="false">
+                            <i style="color: red;" class="flaticon-070-power"></i>
+                            <span class="nav-text">Chiqish</span>
+                        </a>
+                    </li>
+                </ul>
+                <div class="plus-box">
+                    <p class="fs-14 font-w600 mb-2">Hujjatlarni izlash va<br>boshqarish endi yanada oson</p>
+                    <a class="btn btn-light btn-sm fs-14 text-black" href="javascript:void(0);">Batafsil</a>
+                </div>
+            </div>
+        </div>
+        <!--**********************************
+            Sidebar end
+        ***********************************-->
+        
+        <!--**********************************
+            Content body start
+        ***********************************-->
+        <div class="content-body">
+            <!-- row -->
+            <div class="container-fluid">
+                <div class="mb-sm-4 d-flex flex-wrap align-items-center text-head">
+                    <h2 class="mb-3 me-auto">Monitoring paneli</h2>
+                </div>    
+                <div class="row">
+                    <div class="col-xl-3 col-sm-6">
+                        <div class="card">
+                            <div class="card-body d-flex align-items-center justify-content-between">
+                                <div class="card-data me-2">
+                                    <h5>Bo'limlar</h5>
+                                    <h2 class="fs-40 font-w600" id="departmentsCount">0</h2>
+                                </div>
+                                <div class="icon-box">
+                                    <i class="feather icon-layers" style="font-size:48px; color:#2F80ED;"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-sm-6">
+                        <div class="card">
+                            <div class="card-body d-flex align-items-center justify-content-between">
+                                <div class="card-data me-2">
+                                    <h5>Hujjatlar</h5>
+                                    <h2 class="fs-40 font-w600" id="documentsCount">0</h2>
+                                </div>
+                                <div class="icon-box">
+                                    <i class="fas fa-file-lines" style="font-size:48px; color:rgb(56, 226, 93);"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-sm-6">
+                        <div class="card">
+                            <div class="card-body d-flex align-items-center justify-content-between">
+                                <div class="card-data me-2">
+                                    <h5>Xodimlar</h5>
+                                    <h2 class="fs-40 font-w600" id="employeesCount">0</h2>
+                                </div>
+                                <div class="icon-box">
+                                    <i class="fas fa-users" style="font-size:48px; color:rgb(255, 135, 35);"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-sm-6">
+                        <div class="card">
+                            <div class="card-body d-flex align-items-center justify-content-between">
+                                <div class="card-data me-2">
+                                    <h5>Yig'ma jildlar</h5>
+                                    <h2 class="fs-40 font-w600" id="foldersCount">0</h2>
+                                </div>
+                                <div class="icon-box">
+                                    <i class="fas fa-folder" style="font-size:48px; color:rgb(51, 62, 75);"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xl-12 col-xxl-8">
+                        <div class="row">
+                            <div class="col-xl-12">
+                                <div class="d-flex flex-wrap">
+                                    <a href="javascript:void(0);" class="btn btn-primary me-3 mb-3" data-bs-toggle="modal" data-bs-target="#exampleModal">+ Hujjat yaratish</a>
+                                    <div class="table-search mb-3 pe-3">    
+                                        <div class="input-group search-area">
+                                            <input type="text" class="form-control" placeholder="Ma'lumot qidirish" id="globalSearch">
+                                            <span class="input-group-text"><a href="javascript:void(0)"><i class="flaticon-381-search-2"></i></a></span>
+                                        </div>
+                                    </div>    
+                                    <div class="newest mb-3 me-3">
+                                        <select class="form-control default-select ms-0 border" id="documentTypeFilter">
+                                            <option>Hujjat turi</option>
+                                            <option>PDF</option>
+                                            <option>DOC</option>
+                                            <option>XLS</option>
+                                        </select>
+                                    </div>    
+                                    <div class="newest mb-3 me-3">
+                                        <select class="form-control default-select ms-0 border" id="departmentFilter">
+                                            <option>Bo'lim</option>
+                                            <option>Barchasi</option>
+                                        </select>
+                                    </div>    
+                                    <div class="newest mb-3 me-3">
+                                        <select class="form-control default-select ms-0 border" id="dateFilter">
+                                            <option>Sana</option>
+                                            <option>Oxirgi 7 kun</option>
+                                            <option>Oxirgi 30 kun</option>
+                                            <option>Oxirgi 3 oy</option>
+                                        </select>
+                                    </div>    
+                                    <a href="javascript:void(0);" class="btn btn-primary me-3 mb-3" onclick="applyFilters()">
+                                        <i class="fas fa-calendar me-3"></i>Filtrlash
+                                    </a>
+                                    <a href="javascript:void(0);" class="btn btn-warning mb-3" onclick="refreshData()">
+                                        <i class="fas fa-redo-alt"></i>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-xl-12">
+                                <!-- Yuklanish ko'rsatkichi -->
+                                <div class="loading-spinner" id="loadingSpinner">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="visually-hidden">Yuklanmoqda...</span>
+                                    </div>
+                                    <p class="mt-2">Ma'lumotlar yuklanmoqda...</p>
+                                </div>
+                                
+                                <!-- Xatolik xabari -->
+                                <div class="error-message alert alert-danger" id="errorMessage">
+                                    <i class="fas fa-exclamation-triangle me-2"></i>
+                                    <span id="errorText">Ma'lumotlarni yuklashda xatolik yuz berdi</span>
+                                </div>
+                                
+                                <div class="table-responsive fs-14">
+                                    <table class="table display mb-4 dataTablesCard order-table shadow-hover card-table" id="documentsTable">
+                                        <thead>
+                                            <tr>
+                                                <th width="5%">№</th>
+                                                <th width="15%">Indeks raqami</th>
+                                                <th width="50%">Yig'ma jild sarlavhasi</th>
+                                                <th width="20%">Izoh</th>
+                                                <th width="10%">Amallar</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tableBody">
+                                            <!-- Ma'lumotlar JavaScript orqali to'ldiriladi -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Required vendors -->
+    <script src="vendor/global/global.min.js"></script>
+    <script src="vendor/chart.js/Chart.bundle.min.js"></script>
+    <script src="vendor/jquery-nice-select/js/jquery.nice-select.min.js"></script>
+    <script src="vendor/apexchart/apexchart.js"></script>
+    <script src="vendor/peity/jquery.peity.min.js"></script>
+    <script src="vendor/dotted-map/js/contrib/jquery.smallipop-0.3.0.min.js"></script>
+    <script src="vendor/dotted-map/js/contrib/suntimes.js"></script>
+    <script src="vendor/dotted-map/js/contrib/color-0.4.1.js"></script>
+    <script src="vendor/dotted-map/js/world.js"></script>
+    <script src="vendor/dotted-map/js/smallimap.js"></script>
+    <script src="js/dashboard/dotted-map-init.js"></script>
+    <script src="js/custom.min.js"></script>
+    <script src="js/deznav-init.js"></script>
+    <script src="js/demo.js"></script>
+    <script src="js/styleSwitcher.js"></script>
+    
+    <script>
+        // Logout funksiyasi - modalni ko'rsatish
+        function logout() {
+            // Logout modalini ko'rsatish
+            const logoutModal = new bootstrap.Modal(document.getElementById('logoutModal'));
+            logoutModal.show();
+        }
+
+        // Tasdiqlangan logout
+        function confirmLogout() {
+            // LocalStorage dan token va user ma'lumotlarini o'chirish
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('userData');
+            
+            // Modalni yopish
+            const logoutModal = bootstrap.Modal.getInstance(document.getElementById('logoutModal'));
+            logoutModal.hide();
+            
+            // Login sahifasiga yo'naltirish
+            window.location.href = 'login.html';
+        }
+
+        // Dropdown menudagi logout uchun ham event listener qo'shish
+        document.addEventListener('DOMContentLoaded', function() {
+            const dropdownLogout = document.querySelector('.dropdown-item[onclick="logout()"]');
+            if (dropdownLogout) {
+                dropdownLogout.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    logout();
+                });
+            }
+        });
+        // Authentication va ma'lumotlarni yuklash
+        document.addEventListener('DOMContentLoaded', function() {
+            // Token mavjudligini tekshirish
+            const token = localStorage.getItem('authToken');
+            
+            if (!token) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            // Foydalanuvchi ma'lumotlarini yuklash
+            loadUserProfile();
+            
+            // Hujjatlar ro'yxatini yuklash
+            populateTable();
+            
+            // Qidiruv sozlamalari
+            setupSearch();
+        });
+
+        // Foydalanuvchi ma'lumotlarini yuklash
+        async function loadUserProfile() {
+            const token = localStorage.getItem('authToken');
+            
+            try {
+                const response = await fetch('http://127.0.0.1:8000/api/v1/my-profile/', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Token ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Profile yuklashda xatolik');
+                }
+                
+                const userData = await response.json();
+                updateUserInfo(userData);
+                
+            } catch (error) {
+                console.error('Foydalanuvchi ma\'lumotlarini yuklashda xatolik:', error);
+                // Agar profile yuklanmasa, localStorage'dan ma'lumotlarni olish
+                const storedUserData = localStorage.getItem('userData');
+                if (storedUserData) {
+                    updateUserInfo(JSON.parse(storedUserData));
+                }
+            }
+        }
+
+        // Foydalanuvchi ma'lumotlarini yangilash
+        function updateUserInfo(userData) {
+            const userNameElement = document.getElementById('userName');
+            const userPhoneElement = document.getElementById('userPhone');
+            
+            if (userNameElement && userData.full_name) {
+                userNameElement.textContent = userData.full_name;
+            }
+            
+            if (userPhoneElement && userData.phone) {
+                userPhoneElement.textContent = userData.phone;
+            }
+            
+            // Ma'lumotlarni localStorage'da saqlash
+            localStorage.setItem('userData', JSON.stringify(userData));
+        }
+
+        // Logout funksiyasi
+        function logout() {
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('userData');
+            window.location.href = 'login.html';
+        }
+
+        // API manzili
+        const API_URL = 'http://127.0.0.1:8000/api/v1/docs/list/';
+
+        // DOM elementlari
+        const tableBody = document.getElementById('tableBody');
+        const loadingSpinner = document.getElementById('loadingSpinner');
+        const errorMessage = document.getElementById('errorMessage');
+        const errorText = document.getElementById('errorText');
+
+        // Jadvalni to'ldirish funksiyasi
+        async function populateTable() {
+            showLoading();
+            hideError();
+
+            // LocalStorage dan token olish
+            const AUTH_TOKEN = localStorage.getItem('authToken');
+            
+            if (!AUTH_TOKEN) {
+                showError('Siz tizimga kirmagansiz. Iltimos, qaytadan kiring.');
+                hideLoading();
+                window.location.href = 'login.html';
+                return;
+            }
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Token ${AUTH_TOKEN}`,
+                        'Content-Type': 'application/json',
+                    }
+                });
+
+                if (!response.ok) {
+                    if (response.status === 401) {
+                        // Token yaroqsiz yoki muddati o'tgan
+                        localStorage.removeItem('authToken');
+                        localStorage.removeItem('userData');
+                        window.location.href = 'login.html';
+                        return;
+                    }
+                    throw new Error(`HTTP xatolik! Status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                renderTable(data);
+                updateStatistics(data);
+                hideLoading();
+
+            } catch (error) {
+                console.error('Ma\'lumotlarni yuklashda xatolik:', error);
+                showError('Ma\'lumotlarni yuklashda xatolik yuz berdi: ' + error.message);
+                hideLoading();
+            }
+        }
+
+        // Statistikalarni yangilash
+        function updateStatistics(data) {
+            let totalDepartments = 0;
+            let totalDocuments = 0;
+            let totalCategories = 0;
+            let totalFolders = 0;
+
+            if (data && data.length > 0) {
+                totalDepartments = data.length;
+                
+                data.forEach(department => {
+                    if (department.categories && department.categories.length > 0) {
+                        totalCategories += department.categories.length;
+                        
+                        department.categories.forEach(category => {
+                            if (category.docs && category.docs.length > 0) {
+                                totalDocuments += category.docs.length;
+                            }
+                        });
+                    }
+                });
+                
+                // Taxminiy qiymatlar
+                totalFolders = totalCategories;
+            }
+
+            document.getElementById('departmentsCount').textContent = totalDepartments;
+            document.getElementById('documentsCount').textContent = totalDocuments;
+            document.getElementById('employeesCount').textContent = '63'; // Statik qiymat
+            document.getElementById('foldersCount').textContent = totalFolders;
+        }
+
+        // Jadvalni chizish funksiyasi
+        function renderTable(data) {
+            tableBody.innerHTML = '';
+            let rowCount = 1;
+
+            if (!data || data.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="text-center text-muted">
+                            <i class="fas fa-info-circle me-2"></i>Ma'lumotlar topilmadi
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            data.forEach(department => {
+                // Bo'lim sarlavhasi qatori
+                const deptRow = document.createElement('tr');
+                deptRow.className = 'department-header';
+                deptRow.innerHTML = `
+                    <td colspan="5" style="
+                        text-align: center; 
+                        background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+                        color: white; 
+                        font-weight: bold; 
+                        font-size: 20px; 
+                        padding: 20px; 
+                        border-radius: 2px; 
+                        margin: 10px 0; 
+                        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); 
+                        border: 2px solid #1e3c72;
+                    ">
+                        <i class="fas fa-building me-2" style="font-size: 24px; color: #ffd700;"></i>${department.title}
+                    </td>
+                `;
+                tableBody.appendChild(deptRow);
+
+                // Bo'limning kategoriyalari
+                if (department.categories && department.categories.length > 0) {
+                    department.categories.forEach(category => {
+                        const categoryRow = document.createElement('tr');
+                        categoryRow.className = 'category-row';
+                        categoryRow.setAttribute('data-bs-toggle', 'collapse');
+                        categoryRow.setAttribute('data-bs-target', `#docs-${category.id}`);
+                        categoryRow.setAttribute('aria-expanded', 'false');
+                        categoryRow.setAttribute('aria-controls', `docs-${category.id}`);
+                        
+                        categoryRow.innerHTML = `
+                            <td>${rowCount++}</td>
+                            <td class="wspace-no">${category.ichki_raqam || 'N/A'}</td>
+                            <td>${category.tartib_raqami || 'N/A'}</td>
+                            <td class="text-ov">${formatIzoh(category.izoh)}</td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-primary" title="Hujjatlarni ko'rish">
+                                    <i class="fas fa-chevron-down expand-icon"></i>
+                                </button>
+                            </td>
+                        `;
+                        tableBody.appendChild(categoryRow);
+
+                        // Hujjatlar qatori (dastlab yashirin)
+                        createDocumentsRow(category);
+                    });
+                } else {
+                    // Agar kategoriyalar bo'lmasa
+                    const noCategoryRow = document.createElement('tr');
+                    noCategoryRow.innerHTML = `
+                        <td colspan="5" class="no-categories">
+                            <i class="fas fa-info-circle me-2"></i>Kategoriyalar mavjud emas
+                        </td>
+                    `;
+                    tableBody.appendChild(noCategoryRow);
+                }
+            });
+            
+            // Collapse hodisasi uchun event listener qo'shish
+            addCollapseEventListeners();
+        }
+
+        // Hujjatlar qatorini yaratish
+        function createDocumentsRow(category) {
+            const docsRow = document.createElement('tr');
+            docsRow.className = 'collapse';
+            docsRow.id = `docs-${category.id}`;
+            
+            let docsContent = `
+                <td colspan="5" class="p-0">
+                    <div class="documents-section p-3">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-sm documents-table">
+                                <thead>
+                                    <tr>
+                                        <th width="5%" class="text-center">№</th>
+                                        <th width="65%">Hujjat nomi</th>
+                                        <th width="15%" class="text-center">Fayl turi</th>
+                                        <th width="15%" class="text-center">Amallar</th>
+                                    </tr>
+                                </thead>
+                                <tbody>`;
+            
+            if (category.docs && category.docs.length > 0) {
+                category.docs.forEach((doc, index) => {
+                    const fileExtension = doc.file ? doc.file.split('.').pop().toUpperCase() : 'NOMA\'LUM';
+                    const fileIcon = getFileIcon(fileExtension);
+                    
+                    docsContent += `
+                        <tr>
+                            <td class="text-center">${index + 1}</td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-file-${fileIcon} me-2 text-primary"></i>
+                                    <span>${doc.title || 'Nomsiz hujjat'}</span>
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <span class="badge bg-secondary">${fileExtension}</span>
+                            </td>
+                            <td class="text-center">
+                                <button class="btn btn-primary btn-sm" onclick="downloadFile('${doc.file || ''}', '${doc.title || 'hujjat'}')" title="Yuklab olish" ${!doc.file ? 'disabled' : ''}>
+                                    <i class="fas fa-download me-1"></i> Yuklab olish
+                                </button>
+                            </td>
+                        </tr>`;
+                });
+            } else {
+                docsContent += `
+                    <tr>
+                        <td colspan="4" class="text-center text-muted py-3">
+                            <i class="fas fa-info-circle me-2"></i>Hujjatlar mavjud emas
+                        </td>
+                    </tr>`;
+            }
+            
+            docsContent += `
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </td>
+            `;
+            
+            docsRow.innerHTML = docsContent;
+            tableBody.appendChild(docsRow);
+        }
+
+        // Izoh matnini formatlash
+        function formatIzoh(izoh) {
+            if (!izoh) return '';
+            return izoh.replace(/\r\n/g, '<br>').replace(/\n/g, '<br>');
+        }
+
+        // Fayl ikonkasini aniqlash funksiyasi
+        function getFileIcon(extension) {
+            const iconMap = {
+                'PDF': 'pdf',
+                'DOC': 'word',
+                'DOCX': 'word',
+                'PPT': 'powerpoint',
+                'PPTX': 'powerpoint',
+                'XLS': 'excel',
+                'XLSX': 'excel',
+                'TXT': 'alt',
+                'ZIP': 'archive',
+                'NOMA\'LUM': 'question'
+            };
+            return iconMap[extension] || 'alt';
+        }
+
+        // Faylni yuklab olish funksiyasi
+        function downloadFile(filePath, fileName) {
+            if (!filePath) {
+                alert('Fayl manzili mavjud emas');
+                return;
+            }
+            
+            // Simulyatsiya - haqiqiy ilovada faylni yuklab olish
+            alert(`"${fileName}" fayli yuklab olinmoqda...\nFayl manzili: ${filePath}`);
+            
+            // Haqiqiy yuklab olish uchun:
+            // const link = document.createElement('a');
+            // link.href = filePath;
+            // link.download = fileName;
+            // document.body.appendChild(link);
+            // link.click();
+            // document.body.removeChild(link);
+        }
+
+        // Collapse hodisalari uchun event listener
+        function addCollapseEventListeners() {
+            const categoryRows = document.querySelectorAll('.category-row');
+            categoryRows.forEach(row => {
+                row.addEventListener('click', function() {
+                    const icon = this.querySelector('.expand-icon');
+                    if (icon.classList.contains('fa-chevron-down')) {
+                        icon.classList.remove('fa-chevron-down');
+                        icon.classList.add('fa-chevron-up');
+                    } else {
+                        icon.classList.remove('fa-chevron-up');
+                        icon.classList.add('fa-chevron-down');
+                    }
+                });
+            });
+        }
+
+        // Qidiruv funksiyasi
+        function setupSearch() {
+            const searchInput = document.getElementById('globalSearch');
+            searchInput.addEventListener('input', function(e) {
+                const searchTerm = e.target.value.toLowerCase();
+                const rows = document.querySelectorAll('.category-row');
+                let visibleCount = 0;
+                
+                rows.forEach(row => {
+                    const text = row.textContent.toLowerCase();
+                    if (text.includes(searchTerm)) {
+                        row.style.display = '';
+                        visibleCount++;
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+                
+                // Agar hech narsa topilmasa
+                if (visibleCount === 0 && searchTerm !== '') {
+                    tableBody.innerHTML = `
+                        <tr>
+                            <td colspan="5" class="text-center text-muted">
+                                <i class="fas fa-search me-2"></i>"${searchTerm}" so'zi bo'yicha hech narsa topilmadi
+                            </td>
+                        </tr>
+                    `;
+                }
+            });
+        }
+
+        // Filtrlash funksiyasi
+        function applyFilters() {
+            // Filtrlash logikasi
+            console.log('Filtrlash amalga oshirildi');
+            // Bu yerda haqiqiy filtrlash logikasi qo'shishingiz mumkin
+        }
+
+        // Yuklanish ko'rsatkichini ko'rsatish/yashirish
+        function showLoading() {
+            loadingSpinner.style.display = 'block';
+            tableBody.style.display = 'none';
+        }
+
+        function hideLoading() {
+            loadingSpinner.style.display = 'none';
+            tableBody.style.display = '';
+        }
+
+        // Xatolik xabarini ko'rsatish/yashirish
+        function showError(message) {
+            errorText.textContent = message;
+            errorMessage.style.display = 'block';
+            tableBody.style.display = 'none';
+        }
+
+        function hideError() {
+            errorMessage.style.display = 'none';
+        }
+
+        // Yangilash tugmasi
+        function refreshData() {
+            populateTable();
+        }
+    </script>
+</body>
+</html>

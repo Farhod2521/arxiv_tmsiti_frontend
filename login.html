@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en" class="h-100">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Arxiv</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .authincation-content {
+            background: #fff;
+            border-radius: 15px;
+            box-shadow: 0 0 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .auth-form {
+            padding: 40px;
+        }
+        .btn-primary {
+            background-color: #1A73E8;
+            border-color: #1A73E8;
+            padding: 12px;
+            font-weight: 600;
+        }
+        .btn-primary:hover {
+            background-color: #0d62d9;
+            border-color: #0d62d9;
+        }
+        .form-control {
+            padding: 12px 15px;
+            border-radius: 8px;
+        }
+        .input-group-text {
+            background-color: #f8f9fa;
+            border-radius: 8px 0 0 8px;
+        }
+        .show-pass {
+            position: absolute;
+            right: 15px;
+            top: 40px;
+            cursor: pointer;
+            color: #6c757d;
+            z-index: 10;
+        }
+        .show-pass:hover {
+            color: #1A73E8;
+        }
+        .logo-text {
+            font-family: 'Poppins', sans-serif;
+            font-size: 26px;
+            font-weight: 700;
+            color: #273240;
+            letter-spacing: 0.5px;
+        }
+        .alert {
+            display: none;
+        }
+        .loading {
+            display: none;
+        }
+    </style>
+</head>
+<body class="vh-100">
+    <div class="authincation h-100">
+        <div class="container h-100">
+            <div class="row justify-content-center h-100 align-items-center">
+                <div class="col-md-6">
+                    <div class="authincation-content">
+                        <div class="row no-gutters">
+                            <div class="col-xl-12">
+                                <div class="auth-form">
+                                    <div class="text-center mb-3">
+                                        <a href="index.html">
+                                            <svg width="160" height="44" viewBox="0 0 160 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <rect x="0" y="0" width="44" height="44" rx="12" fill="#1A73E8"></rect>
+                                                <path d="M14 28V18C14 16.9 14.9 16 16 16H28C29.1 16 30 16.9 30 18V28C30 29.1 29.1 30 28 30H16C14.9 30 14 29.1 14 28Z" stroke="white" stroke-width="2" stroke-linejoin="round"></path>
+                                                <path d="M18 20H26" stroke="white" stroke-width="2" stroke-linecap="round"></path>
+                                                <path d="M18 24H26" stroke="white" stroke-width="2" stroke-linecap="round"></path>
+                                                <text x="60" y="29" font-family="Poppins, sans-serif" font-size="26" font-weight="700" fill="#273240" letter-spacing="0.5">
+                                                    arxiv.
+                                                </text>
+                                            </svg>
+                                        </a>
+                                    </div>
+                                    <h4 class="text-center mb-4">Tizimga kirish</h4>
+                                    
+                                    <!-- Alert Messages -->
+                                    <div id="successAlert" class="alert alert-success alert-dismissible fade show" role="alert">
+                                        <strong>Muvaffaqiyatli!</strong> Siz tizimga kirdingiz.
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                    </div>
+                                    <div id="errorAlert" class="alert alert-danger alert-dismissible fade show" role="alert">
+                                        <strong>Xatolik!</strong> Telefon raqam yoki parol noto'g'ri.
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                    </div>
+                                    <div id="validationAlert" class="alert alert-warning alert-dismissible fade show" role="alert">
+                                        <strong>Diqqat!</strong> Iltimos, barcha maydonlarni to'ldiring.
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                    </div>
+
+                                    <!-- Loading Spinner -->
+                                    <div id="loadingSpinner" class="text-center loading mb-3">
+                                        <div class="spinner-border text-primary" role="status">
+                                            <span class="visually-hidden">Loading...</span>
+                                        </div>
+                                        <p class="mt-2">Tizimga kirilmoqda...</p>
+                                    </div>
+
+                                    <form id="loginForm">
+                                        <!-- PHONE NUMBER + UZ FLAG + +998 -->
+                                        <div class="mb-3">
+                                            <label class="mb-1"><strong>Telefon raqam</strong></label>
+                                            <div class="input-group">
+                                                <span class="input-group-text">+998</span>
+                                                <input type="text" 
+                                                    id="phone-input"
+                                                    class="form-control" 
+                                                    placeholder="90 123-45-67"
+                                                    required>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3 position-relative">
+                                            <label class="mb-1"><strong>Parol</strong></label>
+                                            <input type="password" id="password-input" class="form-control" placeholder="••••••••" required>
+                                            <span class="show-pass eye">
+                                                <i class="fa fa-eye-slash"></i>
+                                                <i class="fa fa-eye" style="display: none;"></i>
+                                            </span>
+                                        </div>
+
+                                        <!-- BUTTON -->
+                                        <div class="text-center">
+                                            <button type="submit" class="btn btn-primary btn-block">Kirish</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Phone number formatting
+        document.getElementById("phone-input").addEventListener("input", function (e) {
+            let value = e.target.value.replace(/\D/g, ""); // faqat raqam qolsin
+
+            if (value.length > 9) value = value.slice(0, 9);
+
+            let formatted = "";
+
+            if (value.length > 0) {
+                formatted += value.substring(0, 2); // 90
+            }
+            if (value.length > 2) {
+                formatted += " " + value.substring(2, 5); // 123
+            }
+            if (value.length > 5) {
+                formatted += "-" + value.substring(5, 7); // 45
+            }
+            if (value.length > 7) {
+                formatted += "-" + value.substring(7, 9); // 67
+            }
+
+            e.target.value = formatted;
+        });
+
+        // Show/hide password
+        document.querySelector('.show-pass').addEventListener('click', function() {
+            const passwordInput = document.getElementById('password-input');
+            const eyeSlash = this.querySelector('.fa-eye-slash');
+            const eye = this.querySelector('.fa-eye');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                eyeSlash.style.display = 'none';
+                eye.style.display = 'inline-block';
+            } else {
+                passwordInput.type = 'password';
+                eyeSlash.style.display = 'inline-block';
+                eye.style.display = 'none';
+            }
+        });
+
+        // Form submission
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Hide all alerts first
+            document.getElementById('successAlert').style.display = 'none';
+            document.getElementById('errorAlert').style.display = 'none';
+            document.getElementById('validationAlert').style.display = 'none';
+            document.getElementById('loadingSpinner').style.display = 'none';
+            
+            // Get form values
+            const phone = document.getElementById('phone-input').value;
+            const password = document.getElementById('password-input').value;
+            
+            // Validate form
+            if (!phone || !password) {
+                document.getElementById('validationAlert').style.display = 'block';
+                return;
+            }
+            
+            // Clean phone number - remove spaces and dashes
+            const cleanedPhone = phone.replace(/\s+|-/g, '');
+            
+            // Prepare data for POST request
+            const formData = {
+                phone: cleanedPhone,
+                password: password
+            };
+            
+            console.log('Form data to be sent:', formData);
+            
+            // Show loading spinner
+            document.getElementById('loadingSpinner').style.display = 'block';
+            
+            // Send POST request to API
+            fetch('http://127.0.0.1:8000/api/v1/login/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => {
+                // Hide loading spinner
+                document.getElementById('loadingSpinner').style.display = 'none';
+                
+                // Check if response is OK
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Handle successful response
+                console.log('API Response:', data);
+                
+                // Check if login was successful based on your API response structure
+                if (data.message && data.message.includes("Muvaffaqiyatli") && data.token) {
+                    document.getElementById('successAlert').style.display = 'block';
+                    
+                    // Store token in localStorage
+                    localStorage.setItem('authToken', data.token);
+                    
+                    // Store user data if needed
+                    if (data.user) {
+                        localStorage.setItem('userData', JSON.stringify(data.user));
+                    }
+                    
+                    console.log('Token saved:', localStorage.getItem('authToken'));
+                    console.log('User role:', data.user?.role);
+                    
+                    // Role asosida sahifalarga yo'naltirish
+                    setTimeout(() => {
+                        redirectBasedOnRole(data.user);
+                    }, 1500);
+                } else {
+                    document.getElementById('errorAlert').style.display = 'block';
+                }
+            })
+            .catch(error => {
+                // Hide loading spinner
+                document.getElementById('loadingSpinner').style.display = 'none';
+                
+                console.error('Error:', error);
+                document.getElementById('errorAlert').style.display = 'block';
+            });
+        });
+
+        // Role asosida sahifalarga yo'naltirish
+        function redirectBasedOnRole(user) {
+            const role = user?.role?.toLowerCase();
+            
+            // Admin, Direktor, Axborot texnologiyalari uchun index.html
+            if (role === 'admin' || role === 'direktor' || role === 'axborot texnologiyalari') {
+                window.location.href = 'index.html';
+            } 
+            // Boshqa rollar uchun employe.html
+            else {
+                window.location.href = 'employe.html';
+            }
+        }
+        
+        // Check if user is already logged in (optional)
+        document.addEventListener('DOMContentLoaded', function() {
+            const token = localStorage.getItem('authToken');
+            if (token) {
+                console.log('User already has a token, redirecting based on role...');
+                // Agar token bor bo'lsa, role asosida sahifalarga yo'naltirish
+                const userData = localStorage.getItem('userData');
+                if (userData) {
+                    const user = JSON.parse(userData);
+                    redirectBasedOnRole(user);
+                } else {
+                    // Agar userData yo'q bo'lsa, index.html ga yo'naltirish
+                    window.location.href = 'index.html';
+                }
+            }
+        });
+    </script>
+</body>
+</html>
