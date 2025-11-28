@@ -46,6 +46,24 @@
         .category-row:hover {
             background-color: #f8f9fa;
         }
+            /* Yig'ma jild sarlavhasi ustunini kengaytirish */
+        td.title-col, th.title-col {
+            width: 55% !important;
+            max-width: 55% !important;
+            white-space: normal !important;
+        }
+
+        /* Izoh ustuni */
+        td.note-col, th.note-col {
+            width: 20% !important;
+        }
+
+        /* Jadval elementlari overflow bo‘lmasligi uchun */
+        .table td, .table th {
+            white-space: normal !important;
+            word-wrap: break-word !important;
+            word-break: break-word !important;
+        }
     </style>
 </head>
 <body>
@@ -376,21 +394,25 @@
                                 </div>
                                 
                                 <div class="table-responsive fs-14">
-                                    <table class="table display mb-4 dataTablesCard order-table shadow-hover card-table" id="documentsTable">
-                                        <thead>
+                                    <table class="table table-hover table-bordered align-middle w-100">
+
+                                        <thead class="bg-primary text-white">
                                             <tr>
-                                                <th width="5%">№</th>
-                                                <th width="15%">Indeks raqami</th>
-                                                <th width="50%">Yig'ma jild sarlavhasi</th>
-                                                <th width="20%">Izoh</th>
-                                                <th width="10%">Amallar</th>
+                                                <th style="width:5%;">№</th>
+                                                <th style="width:12%;">Indeks raqami</th>
+                                                <th class="title-col">Yig'ma Jild Sarlavhasi</th>
+                                                <th class="note-col">Izoh</th>
+                                                <th style="width:10%;">Amallar</th>
                                             </tr>
                                         </thead>
+
                                         <tbody id="tableBody">
-                                            <!-- Ma'lumotlar JavaScript orqali to'ldiriladi -->
+                                            <!-- JS orqali to'ldiriladi -->
                                         </tbody>
+
                                     </table>
                                 </div>
+
                             </div>
                         </div>
                     </div>
