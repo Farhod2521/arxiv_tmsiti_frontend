@@ -20,13 +20,13 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        .category-actions {
+        .category-actions, .document-actions {
             display: flex;
             gap: 5px;
             justify-content: center;
         }
         
-        .category-actions button {
+        .category-actions button, .document-actions button {
             padding: 5px 10px;
         }
         
@@ -38,60 +38,77 @@
             background-color: #e9ecef;
         }
         
-        .document-actions {
-            display: flex;
-            gap: 5px;
-            justify-content: center;
-        }
-        
-        .document-actions button {
-            padding: 3px 8px;
-            font-size: 12px;
-        }
-        
         .add-category-btn {
             margin-bottom: 15px;
         }
+        
         .loading-spinner {
             text-align: center;
             padding: 20px;
         }
+        
         .error-message {
             display: none;
         }
+        
         .department-header {
             background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
             color: white;
             font-weight: bold;
         }
+        
         .documents-section {
             background-color: #f8f9fa;
             border-radius: 5px;
         }
+        
         .no-categories {
             text-align: center;
             color: #6c757d;
             font-style: italic;
         }
+        
         .category-row {
             cursor: pointer;
         }
+        
         .category-row:hover {
             background-color: #f8f9fa;
         }
+        
         .logout-modal .modal-content {
             border-radius: 15px;
             border: none;
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
         }
+        
         .logout-modal .modal-header {
             border-bottom: 1px solid #e9ecef;
             background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
             border-radius: 15px 15px 0 0;
         }
+        
         .logout-modal .modal-footer {
             border-top: 1px solid #e9ecef;
             border-radius: 0 0 15px 15px;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+        
+        .btn-sm {
+            padding: 5px 10px;
+            font-size: 12px;
+        }
+        
+        .big-category-name {
+            font-weight: bold;
+            color: #1e3c72;
+            margin-bottom: 5px;
+            display: block;
         }
     </style>
 </head>
@@ -122,18 +139,13 @@
         <div class="nav-header">
             <a href="employe.html" class="brand-logo">
                 <svg width="160" height="44" viewBox="0 0 160 44" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <!-- Blue rounded icon -->
-                <rect x="0" y="0" width="44" height="44" rx="12" fill="#1A73E8"></rect>
-
-                <!-- Inside archive icon (white stroke, griya-style) -->
-                <path d="M14 28V18C14 16.9 14.9 16 16 16H28C29.1 16 30 16.9 30 18V28C30 29.1 29.1 30 28 30H16C14.9 30 14 29.1 14 28Z" stroke="white" stroke-width="2" stroke-linejoin="round"></path>
-                <path d="M18 20H26" stroke="white" stroke-width="2" stroke-linecap="round"></path>
-                <path d="M18 24H26" stroke="white" stroke-width="2" stroke-linecap="round"></path>
-
-                <!-- Text "arxiv" styled like griya -->
-                <text x="60" y="29" font-family="Poppins, sans-serif" font-size="26" font-weight="700" fill="#273240" letter-spacing="0.5">
-                    arxiv.
-                </text>
+                    <rect x="0" y="0" width="44" height="44" rx="12" fill="#1A73E8"></rect>
+                    <path d="M14 28V18C14 16.9 14.9 16 16 16H28C29.1 16 30 16.9 30 18V28C30 29.1 29.1 30 28 30H16C14.9 30 14 29.1 14 28Z" stroke="white" stroke-width="2" stroke-linejoin="round"></path>
+                    <path d="M18 20H26" stroke="white" stroke-width="2" stroke-linecap="round"></path>
+                    <path d="M18 24H26" stroke="white" stroke-width="2" stroke-linecap="round"></path>
+                    <text x="60" y="29" font-family="Poppins, sans-serif" font-size="26" font-weight="700" fill="#273240" letter-spacing="0.5">
+                        arxiv.
+                    </text>
                 </svg>
             </a>
             <div class="nav-control">
@@ -145,8 +157,6 @@
         <!--**********************************
             Nav header end
         ***********************************-->
-        
-
         
         <!--**********************************
             Header start
@@ -168,7 +178,6 @@
                                 <a class="nav-link bell dz-theme-mode" href="javascript:void(0);">
                                     <i id="icon-light" class="fas fa-sun"></i>
                                     <i id="icon-dark" class="fas fa-moon"></i>
-                                    
                                 </a>
                             </li>
                             <li class="nav-item dropdown notification_dropdown">
@@ -244,9 +253,6 @@
                                     </a>
                                 </div>
                             </li>
-                            <li class="nav-item">
-                                
-                            </li>
                         </ul>
                     </div>
                 </nav>
@@ -268,24 +274,20 @@
                         </a>
                         <ul aria-expanded="false">
                             <li><a href="employe.html">Bosh sahifa</a></li>
-                            <li><a href="order-list.html">Hujjatlar yuklash</a></li>
-                            <li><a href="table-datatable-basic.html">Bo'lim xodimlar</a></li>
-                            
+                            <li><a href="/">Hujjatlar</a></li>
+                            <li><a href="/">Xodimlar</a></li>
                         </ul>
-
                     </li>
                     <li><a style="color: red;" href="javascript:void(0)" onclick="logout()" aria-expanded="false">
                             <i style="color: red;" class="flaticon-070-power"></i>
                             <span class="nav-text">Chiqish</span>
                         </a>
-            
                     </li>
                 </ul>
                 <div class="plus-box">
-                    <p class="fs-14 font-w600 mb-2">Hujjatlarni izlash va   <br>boshqarish endi yanada oson</p>
+                    <p class="fs-14 font-w600 mb-2">Hujjatlarni izlash va<br>boshqarish endi yanada oson</p>
                     <a class="btn btn-light btn-sm fs-14 text-black" href="javascript:void(0);">Batafsil</a>
                 </div>
-
             </div>
         </div>
         <!--**********************************
@@ -299,24 +301,16 @@
             <!-- row -->
             <div class="container-fluid">
                 <div class="mb-sm-4 d-flex flex-wrap align-items-center text-head">
-                    <h2 class="mb-3 me-auto">Xodimlar paneli</h2>
-    
+                    <h2 class="mb-3 me-auto">Monitoring paneli</h2>
                 </div>    
-    
+
                 <div class="row">
                     <div class="col-xl-12 col-xxl-8">
                         <div class="row">
                             <div class="col-xl-12">
                                 <div class="d-flex flex-wrap">
-                                    <a href="javascript:void(0);" class="btn btn-primary add-category-btn" data-bs-toggle="modal" data-bs-target="#categoryModal">+ Hujjat yaratish</a>
-
-                                    <div class="table-search mb-3 pe-3">    
-                                        <div class="input-group search-area">
-                                            <input type="text" class="form-control" placeholder="Ma'lumot qidirish" id="globalSearch">
-                                            <span class="input-group-text"><a href="javascript:void(0)"><i class="flaticon-381-search-2"></i></a></span>
-                                        </div>
-                                    </div>    
-                                    <div class="newest mb-3 me-3">
+                                    <a href="javascript:void(0);" class="btn btn-primary add-category-btn" data-bs-toggle="modal" data-bs-target="#categoryModal">+ Kategoriya qo'shish</a>
+                                    <div class="newest mb-4 me-3">
                                         <select class="form-control default-select ms-0 border" id="documentTypeFilter">
                                             <option>Hujjat turi</option>
                                             <option>PDF</option>
@@ -338,6 +332,12 @@
                                             <option>Oxirgi 3 oy</option>
                                         </select>
                                     </div>    
+                                    <div class="table-search mb-3 pe-3">    
+                                        <div class="input-group search-area">
+                                            <input type="text" class="form-control" placeholder="Ma'lumot qidirish" id="globalSearch">
+                                            <span class="input-group-text"><a href="javascript:void(0)"><i class="flaticon-381-search-2"></i></a></span>
+                                        </div>
+                                    </div>   
                                     <a href="javascript:void(0);" class="btn btn-primary me-3 mb-3" onclick="applyFilters()">
                                         <i class="fas fa-calendar me-3"></i>Filtrlash
                                     </a>
@@ -368,9 +368,9 @@
                                             <tr>
                                                 <th width="5%">№</th>
                                                 <th width="15%">Indeks raqami</th>
-                                                <th width="50%">Yig'ma jild sarlavhasi</th>
+                                                <th width="40%">Yig'ma jild sarlavhasi</th>
                                                 <th width="20%">Izoh</th>
-                                                <th width="10%">Amallar</th>
+                                                <th width="20%">Amallar</th>
                                             </tr>
                                         </thead>
                                         <tbody id="tableBody">
@@ -424,11 +424,19 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="categoryModalLabel">Category qo'shish</h5>
+                    <h5 class="modal-title" id="categoryModalLabel">Kategoriya qo'shish</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <form id="categoryForm">
+                        <input type="hidden" id="categoryId">
+                        <div class="mb-3">
+                            <label for="bigCategory" class="form-label">Katta bo'lim</label>
+                            <select class="form-control" id="bigCategory" required>
+                                <option value="">Katta bo'limni tanlang</option>
+                                <!-- JavaScript orqali to'ldiriladi -->
+                            </select>
+                        </div>
                         <div class="mb-3">
                             <label for="indeksRaqami" class="form-label">Indeks raqami</label>
                             <input type="text" class="form-control" id="indeksRaqami" required>
@@ -440,6 +448,10 @@
                         <div class="mb-3">
                             <label for="izoh" class="form-label">Izoh</label>
                             <textarea class="form-control" id="izoh" rows="3"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="order" class="form-label">Tartib raqami</label>
+                            <input type="number" class="form-control" id="order" value="0" min="0">
                         </div>
                     </form>
                 </div>
@@ -461,6 +473,7 @@
                 </div>
                 <div class="modal-body">
                     <form id="documentForm">
+                        <input type="hidden" id="documentId">
                         <div class="mb-3">
                             <label for="hujjatNomi" class="form-label">Hujjat nomi</label>
                             <input type="text" class="form-control" id="hujjatNomi" required>
@@ -490,6 +503,33 @@
         </div>
     </div>
 
+    <!-- Delete Confirmation Modal -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">O'chirishni tasdiqlash</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center">
+                        <i class="fas fa-exclamation-triangle text-warning mb-3" style="font-size: 48px;"></i>
+                        <h4 class="mb-3" id="deleteModalText">Ushbu elementni o'chirishni tasdiqlaysizmi?</h4>
+                        <p class="text-muted">Bu amalni qaytarib bo'lmaydi.</p>
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i>Bekor qilish
+                    </button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn">
+                        <i class="fas fa-trash me-2"></i>Ha, o'chirish
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!--**********************************
         Scripts
     ***********************************-->
@@ -498,34 +538,39 @@
     <script src="vendor/global/global.min.js"></script>
     <script src="vendor/chart.js/Chart.bundle.min.js"></script>
     <script src="vendor/jquery-nice-select/js/jquery.nice-select.min.js"></script>
-    
-    <!-- Apex Chart -->
     <script src="vendor/apexchart/apexchart.js"></script>
-    
-    <!-- Chart piety plugin files -->
     <script src="vendor/peity/jquery.peity.min.js"></script>
-    
-    <!-- Dashboard 1 -->
-    <script src="js/dashboard/dashboard-1.js"></script>
-    
-    <!-- JS for dotted map -->
     <script src="vendor/dotted-map/js/contrib/jquery.smallipop-0.3.0.min.js"></script>
     <script src="vendor/dotted-map/js/contrib/suntimes.js"></script>
     <script src="vendor/dotted-map/js/contrib/color-0.4.1.js"></script>
-    
     <script src="vendor/dotted-map/js/world.js"></script>
     <script src="vendor/dotted-map/js/smallimap.js"></script>
     <script src="js/dashboard/dotted-map-init.js"></script>
-    
     <script src="js/custom.min.js"></script>
     <script src="js/deznav-init.js"></script>
     <script src="js/demo.js"></script>
     <script src="js/styleSwitcher.js"></script>
     
     <script>
+        // API URLs
+        const API_BASE_URL = 'http://127.0.0.1:8000/api/v1';
+        const DOCS_LIST_URL = `${API_BASE_URL}/docs/list/`;
+        const DOCS_CRUD_URL = `${API_BASE_URL}/docs/`;
+        const CATEGORY_CREATE_URL = `${API_BASE_URL}/category/create/`;
+        const CATEGORY_UPDATE_URL = `${API_BASE_URL}/category/update/`;
+        const CATEGORY_DELETE_URL = `${API_BASE_URL}/category/delete/`;
+        const BIG_CATEGORY_LIST_URL = `${API_BASE_URL}/big-categories/`;
+
+        // Global variables
+        let currentEditingCategoryId = null;
+        let currentEditingDocumentId = null;
+        let currentCategoryForDocument = null;
+        let deleteType = ''; // 'category' or 'document'
+        let deleteId = null;
+        let bigCategories = [];
+
         // Authentication va ma'lumotlarni yuklash
         document.addEventListener('DOMContentLoaded', function() {
-            // Token mavjudligini tekshirish
             const token = localStorage.getItem('authToken');
             
             if (!token) {
@@ -533,22 +578,43 @@
                 return;
             }
             
-            // Foydalanuvchi ma'lumotlarini yuklash
             loadUserProfile();
-            
-            // Hujjatlar ro'yxatini yuklash
+            loadBigCategories();
             populateTable();
-            
-            // Qidiruv sozlamalari
             setupSearch();
+            setupEventListeners();
         });
 
-        // Foydalanuvchi ma'lumotlarini yuklash
-        async function loadUserProfile() {
+        // Event listenerlarni sozlash
+        function setupEventListeners() {
+            // Category saqlash
+            document.getElementById('saveCategoryBtn').addEventListener('click', saveCategory);
+            
+            // Hujjat saqlash
+            document.getElementById('saveDocumentBtn').addEventListener('click', saveDocument);
+            
+            // O'chirishni tasdiqlash
+            document.getElementById('confirmDeleteBtn').addEventListener('click', confirmDelete);
+            
+            // Category qo'shish tugmasi
+            document.querySelector('.add-category-btn').addEventListener('click', function() {
+                currentEditingCategoryId = null;
+                document.getElementById('categoryModalLabel').textContent = 'Kategoriya qo\'shish';
+                document.getElementById('categoryId').value = '';
+                document.getElementById('indeksRaqami').value = '';
+                document.getElementById('jildSarlavhasi').value = '';
+                document.getElementById('izoh').value = '';
+                document.getElementById('order').value = '0';
+                populateBigCategorySelect();
+            });
+        }
+
+        // Katta kategoriyalarni yuklash
+        async function loadBigCategories() {
             const token = localStorage.getItem('authToken');
             
             try {
-                const response = await fetch('http://127.0.0.1:8000/api/v1/my-profile/', {
+                const response = await fetch(BIG_CATEGORY_LIST_URL, {
                     method: 'GET',
                     headers: {
                         'Authorization': `Token ${token}`,
@@ -556,16 +622,55 @@
                     }
                 });
                 
-                if (!response.ok) {
-                    throw new Error('Profile yuklashda xatolik');
-                }
+                if (!response.ok) throw new Error('Big kategoriyalarni yuklashda xatolik');
+                
+                const data = await response.json();
+                bigCategories = data;
+                
+            } catch (error) {
+                console.error('Katta kategoriyalarni yuklashda xatolik:', error);
+                // Agar API mavjud bo'lmasa, demo ma'lumotlar
+                bigCategories = [
+                    { id: 1, title: "Boshqarma" },
+                    { id: 2, title: "Bo'lim" },
+                    { id: 3, title: "Sektor" }
+                ];
+            }
+        }
+
+        // Katta kategoriyalarni select elementiga to'ldirish
+        function populateBigCategorySelect() {
+            const selectElement = document.getElementById('bigCategory');
+            selectElement.innerHTML = '<option value="">Katta bo\'limni tanlang</option>';
+            
+            bigCategories.forEach(category => {
+                const option = document.createElement('option');
+                option.value = category.id;
+                option.textContent = category.title;
+                selectElement.appendChild(option);
+            });
+        }
+
+        // Foydalanuvchi ma'lumotlarini yuklash
+        async function loadUserProfile() {
+            const token = localStorage.getItem('authToken');
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/my-profile/`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Token ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (!response.ok) throw new Error('Profile yuklashda xatolik');
                 
                 const userData = await response.json();
                 updateUserInfo(userData);
                 
             } catch (error) {
                 console.error('Foydalanuvchi ma\'lumotlarini yuklashda xatolik:', error);
-                // Agar profile yuklanmasa, localStorage'dan ma'lumotlarni olish
                 const storedUserData = localStorage.getItem('userData');
                 if (storedUserData) {
                     updateUserInfo(JSON.parse(storedUserData));
@@ -586,47 +691,14 @@
                 userPhoneElement.textContent = userData.phone;
             }
             
-            // Ma'lumotlarni localStorage'da saqlash
             localStorage.setItem('userData', JSON.stringify(userData));
         }
-
-        // Logout funksiyasi - modalni ko'rsatish
-        function logout() {
-            const logoutModal = new bootstrap.Modal(document.getElementById('logoutModal'));
-            logoutModal.show();
-        }
-
-        // Tasdiqlangan logout
-        function confirmLogout() {
-            localStorage.removeItem('authToken');
-            localStorage.removeItem('userData');
-            const logoutModal = bootstrap.Modal.getInstance(document.getElementById('logoutModal'));
-            logoutModal.hide();
-            window.location.href = 'login.html';
-        }
-
-        // API manzili
-        const API_URL = 'http://127.0.0.1:8000/api/v1/docs/list/';
-
-        // DOM elementlari
-        const tableBody = document.getElementById('tableBody');
-        const loadingSpinner = document.getElementById('loadingSpinner');
-        const errorMessage = document.getElementById('errorMessage');
-        const errorText = document.getElementById('errorText');
-        const saveCategoryBtn = document.getElementById('saveCategoryBtn');
-        const saveDocumentBtn = document.getElementById('saveDocumentBtn');
-
-        // O'zgaruvchilar
-        let currentEditingCategoryId = null;
-        let currentEditingDocumentId = null;
-        let currentCategoryForDocument = null;
 
         // Jadvalni to'ldirish funksiyasi
         async function populateTable() {
             showLoading();
             hideError();
 
-            // LocalStorage dan token olish
             const AUTH_TOKEN = localStorage.getItem('authToken');
             
             if (!AUTH_TOKEN) {
@@ -637,7 +709,7 @@
             }
 
             try {
-                const response = await fetch(API_URL, {
+                const response = await fetch(DOCS_LIST_URL, {
                     method: 'GET',
                     headers: {
                         'Authorization': `Token ${AUTH_TOKEN}`,
@@ -647,7 +719,6 @@
 
                 if (!response.ok) {
                     if (response.status === 401) {
-                        // Token yaroqsiz yoki muddati o'tgan
                         localStorage.removeItem('authToken');
                         localStorage.removeItem('userData');
                         window.location.href = 'login.html';
@@ -669,6 +740,7 @@
 
         // Jadvalni chizish funksiyasi
         function renderTable(data) {
+            const tableBody = document.getElementById('tableBody');
             tableBody.innerHTML = '';
             let rowCount = 1;
 
@@ -688,18 +760,7 @@
                 const deptRow = document.createElement('tr');
                 deptRow.className = 'department-header';
                 deptRow.innerHTML = `
-                    <td colspan="5" style="
-                        text-align: center; 
-                        background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-                        color: white; 
-                        font-weight: bold; 
-                        font-size: 20px; 
-                        padding: 20px; 
-                        border-radius: 2px; 
-                        margin: 10px 0; 
-                        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); 
-                        border: 2px solid #1e3c72;
-                    ">
+                    <td colspan="5" style="text-align: center; background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); color: white; font-weight: bold; font-size: 20px; padding: 20px; border-radius: 2px; margin: 10px 0; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); border: 2px solid #1e3c72;">
                         <i class="fas fa-building me-2" style="font-size: 24px; color: #ffd700;"></i>${department.title}
                     </td>
                 `;
@@ -714,24 +775,32 @@
                         
                         categoryRow.innerHTML = `
                             <td>${rowCount++}</td>
-                            <td class="wspace-no">${category.ichki_raqam}</td>
-                            <td>${category.tartib_raqami}</td>
+                            <td class="wspace-no">${category.ichki_raqam || 'N/A'}</td>
+                            <td>
+                                <span class="big-category-name">${category.big_category_title || department.title}</span>
+                                ${category.tartib_raqami || 'N/A'}
+                            </td>
                             <td class="text-ov">${formatIzoh(category.izoh)}</td>
                             <td>
-                                <div class="category-actions">
+                                <div class="action-buttons">
                                     <button class="btn btn-sm btn-outline-primary expand-btn" title="Hujjatlarni ko'rish" data-category-id="${category.id}">
                                         <i class="fas fa-chevron-down expand-icon"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-warning edit-category-btn" title="Tahrirlash" data-category-id="${category.id}">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-danger delete-category-btn" title="O'chirish" data-category-id="${category.id}">
+                                        <i class="fas fa-trash"></i>
                                     </button>
                                 </div>
                             </td>
                         `;
                         tableBody.appendChild(categoryRow);
 
-                        // Hujjatlar qatori (dastlab yashirin)
+                        // Hujjatlar qatori
                         createDocumentsRow(category);
                     });
                 } else {
-                    // Agar kategoriyalar bo'lmasa
                     const noCategoryRow = document.createElement('tr');
                     noCategoryRow.innerHTML = `
                         <td colspan="5" class="no-categories">
@@ -742,8 +811,7 @@
                 }
             });
             
-            // Event listenerlarni qo'shish
-            addEventListeners();
+            addTableEventListeners();
         }
 
         // Hujjatlar qatorini yaratish
@@ -766,9 +834,9 @@
                                 <thead>
                                     <tr>
                                         <th width="5%" class="text-center">№</th>
-                                        <th width="65%">Hujjat nomi</th>
+                                        <th width="50%">Hujjat nomi</th>
                                         <th width="15%" class="text-center">Fayl turi</th>
-                                        <th width="15%" class="text-center">Amallar</th>
+                                        <th width="30%" class="text-center">Amallar</th>
                                     </tr>
                                 </thead>
                                 <tbody>`;
@@ -791,9 +859,15 @@
                                 <span class="badge bg-secondary">${fileExtension}</span>
                             </td>
                             <td class="text-center">
-                                <div class="document-actions">
+                                <div class="action-buttons">
                                     <button class="btn btn-primary btn-sm" onclick="downloadFile('${doc.file || ''}', '${doc.title || 'hujjat'}')" title="Yuklab olish" ${!doc.file ? 'disabled' : ''}>
-                                        <i class="fas fa-download me-1"></i>
+                                        <i class="fas fa-download"></i>
+                                    </button>
+                                    <button class="btn btn-warning btn-sm edit-document-btn" title="Tahrirlash" data-document-id="${doc.id}">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn btn-danger btn-sm delete-document-btn" title="O'chirish" data-document-id="${doc.id}">
+                                        <i class="fas fa-trash"></i>
                                     </button>
                                 </div>
                             </td>
@@ -817,7 +891,378 @@
             `;
             
             docsRow.innerHTML = docsContent;
-            tableBody.appendChild(docsRow);
+            document.getElementById('tableBody').appendChild(docsRow);
+        }
+
+        // Table event listenerlarni qo'shish
+        function addTableEventListeners() {
+            // Category kengaytirish/kichraytirish
+            document.querySelectorAll('.expand-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const categoryId = this.getAttribute('data-category-id');
+                    const docsRow = document.getElementById(`docs-${categoryId}`);
+                    const icon = this.querySelector('.expand-icon');
+                    
+                    if (docsRow.classList.contains('show')) {
+                        docsRow.classList.remove('show');
+                        icon.classList.remove('fa-chevron-up');
+                        icon.classList.add('fa-chevron-down');
+                    } else {
+                        docsRow.classList.add('show');
+                        icon.classList.remove('fa-chevron-down');
+                        icon.classList.add('fa-chevron-up');
+                    }
+                });
+            });
+
+            // Category tahrirlash
+            document.querySelectorAll('.edit-category-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const categoryId = this.getAttribute('data-category-id');
+                    editCategory(categoryId);
+                });
+            });
+
+            // Category o'chirish
+            document.querySelectorAll('.delete-category-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const categoryId = this.getAttribute('data-category-id');
+                    showDeleteModal('category', categoryId);
+                });
+            });
+
+            // Hujjat qo'shish
+            document.querySelectorAll('.add-document-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    currentCategoryForDocument = this.getAttribute('data-category-id');
+                    currentEditingDocumentId = null;
+                    document.getElementById('documentModalLabel').textContent = "Hujjat qo'shish";
+                    document.getElementById('hujjatNomi').value = '';
+                    document.getElementById('faylTuri').value = '';
+                    document.getElementById('faylYuklash').value = '';
+                    document.getElementById('documentId').value = '';
+                    
+                    const documentModal = new bootstrap.Modal(document.getElementById('documentModal'));
+                    documentModal.show();
+                });
+            });
+
+            // Hujjat tahrirlash
+            document.querySelectorAll('.edit-document-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const documentId = this.getAttribute('data-document-id');
+                    editDocument(documentId);
+                });
+            });
+
+            // Hujjat o'chirish
+            document.querySelectorAll('.delete-document-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const documentId = this.getAttribute('data-document-id');
+                    showDeleteModal('document', documentId);
+                });
+            });
+        }
+
+        // Category tahrirlash
+        async function editCategory(categoryId) {
+            const AUTH_TOKEN = localStorage.getItem('authToken');
+            
+            try {
+                // Avval kategoriya ma'lumotlarini olish
+                const response = await fetch(`${DOCS_LIST_URL}`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Token ${AUTH_TOKEN}`,
+                        'Content-Type': 'application/json',
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Kategoriya ma\'lumotlarini olishda xatolik');
+                }
+
+                const data = await response.json();
+                let categoryData = null;
+                
+                // Kategoriyani qidirish
+                data.forEach(department => {
+                    if (department.categories) {
+                        const foundCategory = department.categories.find(cat => cat.id == categoryId);
+                        if (foundCategory) {
+                            categoryData = foundCategory;
+                            // Katta kategoriya ID sini olish
+                            categoryData.big_category_id = department.id;
+                        }
+                    }
+                });
+
+                if (!categoryData) {
+                    alert('Kategoriya topilmadi');
+                    return;
+                }
+
+                // Formani to'ldirish
+                document.getElementById('categoryModalLabel').textContent = 'Kategoriyani tahrirlash';
+                document.getElementById('categoryId').value = categoryData.id;
+                document.getElementById('indeksRaqami').value = categoryData.ichki_raqam || '';
+                document.getElementById('jildSarlavhasi').value = categoryData.tartib_raqami || '';
+                document.getElementById('izoh').value = categoryData.izoh || '';
+                document.getElementById('order').value = categoryData.order || '0';
+                currentEditingCategoryId = categoryId;
+                
+                // Katta kategoriya select ni to'ldirish
+                populateBigCategorySelect();
+                document.getElementById('bigCategory').value = categoryData.big_category_id || '';
+                
+                const categoryModal = new bootstrap.Modal(document.getElementById('categoryModal'));
+                categoryModal.show();
+                
+            } catch (error) {
+                console.error('Kategoriyani tahrirlashda xatolik:', error);
+                alert('Kategoriya ma\'lumotlarini yuklashda xatolik: ' + error.message);
+            }
+        }
+
+        // Hujjat tahrirlash
+        async function editDocument(documentId) {
+            // Hujjat ma'lumotlarini olish uchun API chaqiruvi
+            const AUTH_TOKEN = localStorage.getItem('authToken');
+            
+            try {
+                const response = await fetch(`${DOCS_CRUD_URL}${documentId}/`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Token ${AUTH_TOKEN}`,
+                        'Content-Type': 'application/json',
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Hujjat ma\'lumotlarini olishda xatolik');
+                }
+
+                const documentData = await response.json();
+                
+                // Formani to'ldirish
+                document.getElementById('documentModalLabel').textContent = 'Hujjatni tahrirlash';
+                document.getElementById('hujjatNomi').value = documentData.title || '';
+                document.getElementById('faylTuri').value = documentData.file_type || '';
+                document.getElementById('documentId').value = documentId;
+                currentEditingDocumentId = documentId;
+                
+                const documentModal = new bootstrap.Modal(document.getElementById('documentModal'));
+                documentModal.show();
+                
+            } catch (error) {
+                console.error('Hujjatni tahrirlashda xatolik:', error);
+                alert('Hujjat ma\'lumotlarini yuklashda xatolik: ' + error.message);
+            }
+        }
+
+        // Category saqlash
+        async function saveCategory() {
+            const bigCategory = document.getElementById('bigCategory').value;
+            const indeksRaqami = document.getElementById('indeksRaqami').value;
+            const jildSarlavhasi = document.getElementById('jildSarlavhasi').value;
+            const izoh = document.getElementById('izoh').value;
+            const order = document.getElementById('order').value;
+            const categoryId = document.getElementById('categoryId').value;
+            
+            if (!bigCategory || !indeksRaqami || !jildSarlavhasi) {
+                alert('Barcha majburiy maydonlarni to\'ldirishingiz shart');
+                return;
+            }
+            
+            const AUTH_TOKEN = localStorage.getItem('authToken');
+            const url = currentEditingCategoryId ? 
+                `${CATEGORY_UPDATE_URL}${currentEditingCategoryId}/` : 
+                CATEGORY_CREATE_URL;
+            
+            const method = currentEditingCategoryId ? 'PUT' : 'POST';
+            
+            try {
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Authorization': `Token ${AUTH_TOKEN}`,
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        big_category: parseInt(bigCategory),
+                        ichki_raqam: indeksRaqami,
+                        tartib_raqami: jildSarlavhasi,
+                        izoh: izoh,
+                        order: parseInt(order)
+                    })
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || errorData.detail || 'Saqlashda xatolik');
+                }
+
+                const result = await response.json();
+                alert(currentEditingCategoryId ? 'Kategoriya muvaffaqiyatli yangilandi' : 'Kategoriya muvaffaqiyatli qo\'shildi');
+                
+                const modal = bootstrap.Modal.getInstance(document.getElementById('categoryModal'));
+                modal.hide();
+                
+                populateTable();
+                
+            } catch (error) {
+                console.error('Saqlashda xatolik:', error);
+                alert('Saqlashda xatolik yuz berdi: ' + error.message);
+            }
+        }
+
+        // Hujjat saqlash
+        async function saveDocument() {
+            const hujjatNomi = document.getElementById('hujjatNomi').value;
+            const faylTuri = document.getElementById('faylTuri').value;
+            const faylYuklash = document.getElementById('faylYuklash').files[0];
+            const documentId = document.getElementById('documentId').value;
+            
+            if (!hujjatNomi || !faylTuri) {
+                alert('Hujjat nomi va fayl turi maydonlari to\'ldirilishi shart');
+                return;
+            }
+            
+            // Agar hujjat yangi bo'lsa va fayl yuklanmasa
+            if (!currentEditingDocumentId && !faylYuklash) {
+                alert('Yangi hujjat uchun fayl yuklashingiz kerak');
+                return;
+            }
+            
+            const AUTH_TOKEN = localStorage.getItem('authToken');
+            const url = currentEditingDocumentId ? 
+                `${DOCS_CRUD_URL}${currentEditingDocumentId}/` : 
+                DOCS_CRUD_URL;
+            
+            const method = currentEditingDocumentId ? 'PUT' : 'POST';
+            
+            const formData = new FormData();
+            formData.append('title', hujjatNomi);
+            formData.append('file_type', faylTuri);
+            if (faylYuklash) {
+                formData.append('file', faylYuklash);
+            }
+            if (currentCategoryForDocument) {
+                formData.append('category', currentCategoryForDocument);
+            }
+            
+            try {
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Authorization': `Token ${AUTH_TOKEN}`,
+                    },
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || errorData.detail || 'Saqlashda xatolik');
+                }
+
+                const result = await response.json();
+                alert(currentEditingDocumentId ? 'Hujjat muvaffaqiyatli yangilandi' : 'Hujjat muvaffaqiyatli qo\'shildi');
+                
+                const modal = bootstrap.Modal.getInstance(document.getElementById('documentModal'));
+                modal.hide();
+                
+                populateTable();
+                
+            } catch (error) {
+                console.error('Saqlashda xatolik:', error);
+                alert('Saqlashda xatolik yuz berdi: ' + error.message);
+            }
+        }
+
+        // O'chirish modalini ko'rsatish
+        function showDeleteModal(type, id) {
+            deleteType = type;
+            deleteId = id;
+            
+            const modalText = document.getElementById('deleteModalText');
+            if (type === 'category') {
+                modalText.textContent = 'Ushbu kategoriyani o\'chirishni tasdiqlaysizmi?';
+            } else {
+                modalText.textContent = 'Ushbu hujjatni o\'chirishni tasdiqlaysizmi?';
+            }
+            
+            const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+            deleteModal.show();
+        }
+
+        // O'chirishni tasdiqlash
+        async function confirmDelete() {
+            const AUTH_TOKEN = localStorage.getItem('authToken');
+            
+            try {
+                let url;
+                
+                if (deleteType === 'category') {
+                    // Kategoriya o'chirish
+                    url = `${CATEGORY_DELETE_URL}${deleteId}/`;
+                } else {
+                    // Hujjat o'chirish
+                    url = `${DOCS_CRUD_URL}`;
+                }
+                
+                let requestOptions = {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Token ${AUTH_TOKEN}`,
+                        'Content-Type': 'application/json',
+                    }
+                };
+                
+                // Faqat hujjat uchun body qo'shamiz
+                if (deleteType === 'document') {
+                    requestOptions.body = JSON.stringify({ ids: [parseInt(deleteId)] });
+                }
+                
+                const response = await fetch(url, requestOptions);
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || errorData.detail || 'O\'chirishda xatolik');
+                }
+
+                let result;
+                if (response.status !== 204) {
+                    result = await response.json();
+                }
+                
+                alert(deleteType === 'category' ? 'Kategoriya muvaffaqiyatli o\'chirildi' : 
+                      (result?.message || 'Hujjat muvaffaqiyatli o\'chirildi'));
+                
+                const modal = bootstrap.Modal.getInstance(document.getElementById('deleteModal'));
+                modal.hide();
+                
+                populateTable();
+                
+            } catch (error) {
+                console.error('O\'chirishda xatolik:', error);
+                alert('O\'chirishda xatolik yuz berdi: ' + error.message);
+            }
+        }
+
+        // Faylni yuklab olish funksiyasi
+        function downloadFile(filePath, fileName) {
+            if (!filePath) {
+                alert('Fayl manzili mavjud emas');
+                return;
+            }
+            
+            // Haqiqiy yuklab olish
+            const link = document.createElement('a');
+            link.href = filePath;
+            link.download = fileName;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
         }
 
         // Izoh matnini formatlash
@@ -838,107 +1283,11 @@
                 'XLSX': 'excel',
                 'TXT': 'alt',
                 'ZIP': 'archive',
+                'RAR': 'archive',
                 'NOMA\'LUM': 'question'
             };
             return iconMap[extension] || 'alt';
         }
-
-        // Faylni yuklab olish funksiyasi
-        function downloadFile(filePath, fileName) {
-            if (!filePath) {
-                alert('Fayl manzili mavjud emas');
-                return;
-            }
-            
-            alert(`"${fileName}" fayli yuklab olinmoqda...\nFayl manzili: ${filePath}`);
-        }
-
-        // Event listenerlarni qo'shish
-        function addEventListeners() {
-            // Category kengaytirish/kichraytirish
-            const expandButtons = document.querySelectorAll('.expand-btn');
-            expandButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    const categoryId = this.getAttribute('data-category-id');
-                    const docsRow = document.getElementById(`docs-${categoryId}`);
-                    const icon = this.querySelector('.expand-icon');
-                    
-                    if (docsRow.classList.contains('show')) {
-                        docsRow.classList.remove('show');
-                        icon.classList.remove('fa-chevron-up');
-                        icon.classList.add('fa-chevron-down');
-                    } else {
-                        docsRow.classList.add('show');
-                        icon.classList.remove('fa-chevron-down');
-                        icon.classList.add('fa-chevron-up');
-                    }
-                });
-            });
-            
-            // Category qo'shish
-            const addCategoryBtn = document.querySelector('.add-category-btn');
-            addCategoryBtn.addEventListener('click', function() {
-                currentEditingCategoryId = null;
-                document.getElementById('categoryModalLabel').textContent = 'Category qoshish';
-                document.getElementById('indeksRaqami').value = '';
-                document.getElementById('jildSarlavhasi').value = '';
-                document.getElementById('izoh').value = '';
-            });
-            
-            // Hujjat qo'shish
-            const addDocumentButtons = document.querySelectorAll('.add-document-btn');
-            addDocumentButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    currentCategoryForDocument = this.getAttribute('data-category-id');
-                    currentEditingDocumentId = null;
-                    document.getElementById('documentModalLabel').textContent = "Hujjat qo'shish";
-                    document.getElementById('hujjatNomi').value = '';
-                    document.getElementById('faylTuri').value = '';
-                    document.getElementById('faylYuklash').value = '';
-                    
-                    const documentModal = new bootstrap.Modal(document.getElementById('documentModal'));
-                    documentModal.show();
-                });
-            });
-        }
-
-        // Category saqlash
-        saveCategoryBtn.addEventListener('click', function() {
-            const indeksRaqami = document.getElementById('indeksRaqami').value;
-            const jildSarlavhasi = document.getElementById('jildSarlavhasi').value;
-            const izoh = document.getElementById('izoh').value;
-            
-            if (!indeksRaqami || !jildSarlavhasi) {
-                alert('Indeks raqami va jild sarlavhasi maydonlari to\'ldirilishi shart');
-                return;
-            }
-            
-            alert(currentEditingCategoryId ? 'Category muvaffaqiyatli yangilandi' : 'Category muvaffaqiyatli qo\'shildi');
-            
-            const modal = bootstrap.Modal.getInstance(document.getElementById('categoryModal'));
-            modal.hide();
-            
-            populateTable(); // Jadvalni yangilash
-        });
-        
-        // Hujjat saqlash
-        saveDocumentBtn.addEventListener('click', function() {
-            const hujjatNomi = document.getElementById('hujjatNomi').value;
-            const faylTuri = document.getElementById('faylTuri').value;
-            const faylYuklash = document.getElementById('faylYuklash').files[0];
-            
-            if (!hujjatNomi || !faylTuri) {
-                alert('Hujjat nomi va fayl turi maydonlari to\'ldirilishi shart');
-                return;
-            }
-            
-            alert(currentEditingDocumentId ? 'Hujjat muvaffaqiyatli yangilandi' : 'Hujjat muvaffaqiyatli qo\'shildi');
-            
-            const modal = bootstrap.Modal.getInstance(document.getElementById('documentModal'));
-            modal.hide();
-            
-            populateTable(); // Jadvalni yangilash
-        });
 
         // Qidiruv funksiyasi
         function setupSearch() {
@@ -957,50 +1306,53 @@
                         row.style.display = 'none';
                     }
                 });
-                
-                // Agar hech narsa topilmasa
-                if (visibleCount === 0 && searchTerm !== '') {
-                    tableBody.innerHTML = `
-                        <tr>
-                            <td colspan="5" class="text-center text-muted">
-                                <i class="fas fa-search me-2"></i>"${searchTerm}" so'zi bo'yicha hech narsa topilmadi
-                            </td>
-                        </tr>
-                    `;
-                }
             });
         }
 
-        // Filtrlash funksiyasi
-        function applyFilters() {
-            console.log('Filtrlash amalga oshirildi');
+        // Logout funksiyalari
+        function logout() {
+            const logoutModal = new bootstrap.Modal(document.getElementById('logoutModal'));
+            logoutModal.show();
+        }
+
+        function confirmLogout() {
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('userData');
+            const logoutModal = bootstrap.Modal.getInstance(document.getElementById('logoutModal'));
+            logoutModal.hide();
+            window.location.href = 'login.html';
         }
 
         // Yuklanish ko'rsatkichini ko'rsatish/yashirish
         function showLoading() {
-            loadingSpinner.style.display = 'block';
-            tableBody.style.display = 'none';
+            document.getElementById('loadingSpinner').style.display = 'block';
+            document.getElementById('tableBody').style.display = 'none';
         }
 
         function hideLoading() {
-            loadingSpinner.style.display = 'none';
-            tableBody.style.display = '';
+            document.getElementById('loadingSpinner').style.display = 'none';
+            document.getElementById('tableBody').style.display = '';
         }
 
         // Xatolik xabarini ko'rsatish/yashirish
         function showError(message) {
-            errorText.textContent = message;
-            errorMessage.style.display = 'block';
-            tableBody.style.display = 'none';
+            document.getElementById('errorText').textContent = message;
+            document.getElementById('errorMessage').style.display = 'block';
+            document.getElementById('tableBody').style.display = 'none';
         }
 
         function hideError() {
-            errorMessage.style.display = 'none';
+            document.getElementById('errorMessage').style.display = 'none';
         }
 
         // Yangilash tugmasi
         function refreshData() {
             populateTable();
+        }
+
+        // Filtrlash funksiyasi (demo)
+        function applyFilters() {
+            alert('Filtrlash funksiyasi ishlatilmoqda...');
         }
     </script>
 </body>
