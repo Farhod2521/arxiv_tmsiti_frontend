@@ -431,9 +431,9 @@
                     <form id="categoryForm">
                         <input type="hidden" id="categoryId">
                         <div class="mb-3">
-                            <label for="bigCategory" class="form-label">Katta bo'lim</label>
+                            <label for="bigCategory" class="form-label">Bo'lim</label>
                             <select class="form-control" id="bigCategory" required>
-                                <option value="">Katta bo'limni tanlang</option>
+                                <option value="">Bo'limni tanlang</option>
                                 <!-- JavaScript orqali to'ldiriladi -->
                             </select>
                         </div>
@@ -448,10 +448,6 @@
                         <div class="mb-3">
                             <label for="izoh" class="form-label">Izoh</label>
                             <textarea class="form-control" id="izoh" rows="3"></textarea>
-                        </div>
-                        <div class="mb-3">
-                            <label for="order" class="form-label">Tartib raqami</label>
-                            <input type="number" class="form-control" id="order" value="0" min="0">
                         </div>
                     </form>
                 </div>
@@ -559,7 +555,7 @@
         const CATEGORY_CREATE_URL = `${API_BASE_URL}/category/create/`;
         const CATEGORY_UPDATE_URL = `${API_BASE_URL}/category/update/`;
         const CATEGORY_DELETE_URL = `${API_BASE_URL}/category/delete/`;
-        const BIG_CATEGORY_LIST_URL = `${API_BASE_URL}/big-categories/`;
+        const BIG_CATEGORY_LIST_URL = `${API_BASE_URL}/docs/list/`;
 
         // Global variables
         let currentEditingCategoryId = null;
@@ -604,12 +600,11 @@
                 document.getElementById('indeksRaqami').value = '';
                 document.getElementById('jildSarlavhasi').value = '';
                 document.getElementById('izoh').value = '';
-                document.getElementById('order').value = '0';
                 populateBigCategorySelect();
             });
         }
 
-        // Katta kategoriyalarni yuklash
+        // Katta kategoriyalarni yuklash (bo'limlar ro'yxati)
         async function loadBigCategories() {
             const token = localStorage.getItem('authToken');
             
@@ -622,17 +617,17 @@
                     }
                 });
                 
-                if (!response.ok) throw new Error('Big kategoriyalarni yuklashda xatolik');
+                if (!response.ok) throw new Error('Bo\'limlar ro\'yxatini yuklashda xatolik');
                 
                 const data = await response.json();
                 bigCategories = data;
                 
             } catch (error) {
-                console.error('Katta kategoriyalarni yuklashda xatolik:', error);
+                console.error('Bo\'limlarni yuklashda xatolik:', error);
                 // Agar API mavjud bo'lmasa, demo ma'lumotlar
                 bigCategories = [
-                    { id: 1, title: "Boshqarma" },
-                    { id: 2, title: "Bo'lim" },
+                    { id: 1, title: "Ijro nazorati bo'limi" },
+                    { id: 2, title: "Boshqarma" },
                     { id: 3, title: "Sektor" }
                 ];
             }
@@ -641,7 +636,7 @@
         // Katta kategoriyalarni select elementiga to'ldirish
         function populateBigCategorySelect() {
             const selectElement = document.getElementById('bigCategory');
-            selectElement.innerHTML = '<option value="">Katta bo\'limni tanlang</option>';
+            selectElement.innerHTML = '<option value="">Bo\'limni tanlang</option>';
             
             bigCategories.forEach(category => {
                 const option = document.createElement('option');
@@ -777,7 +772,7 @@
                             <td>${rowCount++}</td>
                             <td class="wspace-no">${category.ichki_raqam || 'N/A'}</td>
                             <td>
-                                <span class="big-category-name">${category.big_category_title || department.title}</span>
+                                <span class="big-category-name">${department.title}</span>
                                 ${category.tartib_raqami || 'N/A'}
                             </td>
                             <td class="text-ov">${formatIzoh(category.izoh)}</td>
@@ -984,6 +979,7 @@
 
                 const data = await response.json();
                 let categoryData = null;
+                let departmentData = null;
                 
                 // Kategoriyani qidirish
                 data.forEach(department => {
@@ -991,8 +987,7 @@
                         const foundCategory = department.categories.find(cat => cat.id == categoryId);
                         if (foundCategory) {
                             categoryData = foundCategory;
-                            // Katta kategoriya ID sini olish
-                            categoryData.big_category_id = department.id;
+                            departmentData = department;
                         }
                     }
                 });
@@ -1008,12 +1003,11 @@
                 document.getElementById('indeksRaqami').value = categoryData.ichki_raqam || '';
                 document.getElementById('jildSarlavhasi').value = categoryData.tartib_raqami || '';
                 document.getElementById('izoh').value = categoryData.izoh || '';
-                document.getElementById('order').value = categoryData.order || '0';
                 currentEditingCategoryId = categoryId;
                 
-                // Katta kategoriya select ni to'ldirish
+                // Bo'lim select ni to'ldirish
                 populateBigCategorySelect();
-                document.getElementById('bigCategory').value = categoryData.big_category_id || '';
+                document.getElementById('bigCategory').value = departmentData.id || '';
                 
                 const categoryModal = new bootstrap.Modal(document.getElementById('categoryModal'));
                 categoryModal.show();
@@ -1066,7 +1060,6 @@
             const indeksRaqami = document.getElementById('indeksRaqami').value;
             const jildSarlavhasi = document.getElementById('jildSarlavhasi').value;
             const izoh = document.getElementById('izoh').value;
-            const order = document.getElementById('order').value;
             const categoryId = document.getElementById('categoryId').value;
             
             if (!bigCategory || !indeksRaqami || !jildSarlavhasi) {
@@ -1092,8 +1085,7 @@
                         big_category: parseInt(bigCategory),
                         ichki_raqam: indeksRaqami,
                         tartib_raqami: jildSarlavhasi,
-                        izoh: izoh,
-                        order: parseInt(order)
+                        izoh: izoh
                     })
                 });
 
