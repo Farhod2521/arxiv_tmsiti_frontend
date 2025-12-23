@@ -46,22 +46,32 @@
         .category-row:hover {
             background-color: #f8f9fa;
         }
-            /* Yig'ma jild sarlavhasi ustunini kengaytirish */
         td.title-col, th.title-col {
             width: 55% !important;
             max-width: 55% !important;
             white-space: normal !important;
         }
-
-        /* Izoh ustuni */
         td.note-col, th.note-col {
             width: 20% !important;
         }
-
         .table td, .table th {
             white-space: normal !important;
             word-wrap: break-word !important;
             word-break: break-word !important;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 5px;
+            justify-content: center;
+        }
+        .modal-document-view {
+            max-height: 80vh;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+        }
+        .modal-document-header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
         }
     </style>
 </head>
@@ -226,6 +236,82 @@
                 </div>
             </div>
         </div>
+        
+        <!-- Document View Modal (3-ish uchun) -->
+        <div class="modal fade" id="documentViewModal" tabindex="-1" aria-labelledby="documentViewModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-xl modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header modal-document-header">
+                        <h5 class="modal-title" id="documentViewModalLabel">
+                            <i class="fas fa-file me-2"></i>
+                            <span id="modalDocumentTitle">Hujjatni ko'rish</span>
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <h6>Hujjat ma'lumotlari:</h6>
+                                <table class="table table-sm">
+                                    <tr>
+                                        <th width="40%">Hujjat nomi:</th>
+                                        <td id="modalDocName">-</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Fayl turi:</th>
+                                        <td id="modalFileType">-</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Yaratilgan sana:</th>
+                                        <td id="modalCreateDate">-</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Bo'lim:</th>
+                                        <td id="modalDepartment">-</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Kategoriya:</th>
+                                        <td id="modalCategory">-</td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="col-md-6">
+                                <h6>Fayl manzili:</h6>
+                                <div class="input-group mb-3">
+                                    <input type="text" class="form-control" id="modalFileUrl" readonly>
+                                    <button class="btn btn-outline-secondary" type="button" onclick="copyFileUrl()">
+                                        <i class="fas fa-copy"></i>
+                                    </button>
+                                </div>
+                                <div class="d-grid gap-2">
+                                    <button class="btn btn-primary" onclick="downloadFromModal()">
+                                        <i class="fas fa-download me-2"></i>Yuklab olish
+                                    </button>
+                                    <button class="btn btn-outline-primary" onclick="openFileInNewTab()">
+                                        <i class="fas fa-external-link-alt me-2"></i>Yangi oynada ochish
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="border rounded p-3 modal-document-view">
+                            <h6 class="mb-3">Fayl kontenti:</h6>
+                            <div id="modalFileContent" class="text-center">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Yuklanmoqda...</span>
+                                </div>
+                                <p class="mt-2">Fayl yuklanmoqda...</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            <i class="fas fa-times me-2"></i>Yopish
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
         <!--**********************************
             Sidebar start
         ***********************************-->
@@ -343,8 +429,9 @@
                                     </div>    
                                     <div class="newest mb-3 me-3">
                                         <select class="form-control default-select ms-0 border" id="departmentFilter">
-                                            <option>Bo'lim</option>
-                                            <option>Barchasi</option>
+                                            <option value="">Bo'lim</option>
+                                            <option value="all">Barchasi</option>
+                                            <!-- 1-ish: API dan kelgan ma'lumotlar bilan to'ldiriladi -->
                                         </select>
                                     </div>    
                                     <div class="newest mb-3 me-3">
@@ -420,40 +507,13 @@
     <script src="js/styleSwitcher.js"></script>
     
     <script>
-        // Logout funksiyasi - modalni ko'rsatish
-        function logout() {
-            // Logout modalini ko'rsatish
-            const logoutModal = new bootstrap.Modal(document.getElementById('logoutModal'));
-            logoutModal.show();
-        }
+        // Global o'zgaruvchilar (1-ish va 2-ish uchun)
+        let allData = []; // Barcha ma'lumotlarni saqlash
+        let currentDepartment = ''; // Joriy bo'lim
+        let modalDocumentData = {}; // 3-ish uchun modal ma'lumotlari
 
-        // Tasdiqlangan logout
-        function confirmLogout() {
-            // LocalStorage dan token va user ma'lumotlarini o'chirish
-            localStorage.removeItem('authToken');
-            localStorage.removeItem('userData');
-            
-            // Modalni yopish
-            const logoutModal = bootstrap.Modal.getInstance(document.getElementById('logoutModal'));
-            logoutModal.hide();
-            
-            // Login sahifasiga yo'naltirish
-            window.location.href = 'login.html';
-        }
-
-        // Dropdown menudagi logout uchun ham event listener qo'shish
-        document.addEventListener('DOMContentLoaded', function() {
-            const dropdownLogout = document.querySelector('.dropdown-item[onclick="logout()"]');
-            if (dropdownLogout) {
-                dropdownLogout.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    logout();
-                });
-            }
-        });
         // Authentication va ma'lumotlarni yuklash
         document.addEventListener('DOMContentLoaded', function() {
-            // Token mavjudligini tekshirish
             const token = localStorage.getItem('authToken');
             
             if (!token) {
@@ -461,14 +521,14 @@
                 return;
             }
             
-            // Foydalanuvchi ma'lumotlarini yuklash
             loadUserProfile();
-            
-            // Hujjatlar ro'yxatini yuklash
             populateTable();
-            
-            // Qidiruv sozlamalari
             setupSearch();
+            
+            // 1-ish: Bo'lim filteri o'zgarishini kuzatish
+            document.getElementById('departmentFilter').addEventListener('change', function() {
+                filterByDepartment(this.value);
+            });
         });
 
         // Foydalanuvchi ma'lumotlarini yuklash
@@ -493,7 +553,6 @@
                 
             } catch (error) {
                 console.error('Foydalanuvchi ma\'lumotlarini yuklashda xatolik:', error);
-                // Agar profile yuklanmasa, localStorage'dan ma'lumotlarni olish
                 const storedUserData = localStorage.getItem('userData');
                 if (storedUserData) {
                     updateUserInfo(JSON.parse(storedUserData));
@@ -514,14 +573,20 @@
                 userPhoneElement.textContent = userData.phone;
             }
             
-            // Ma'lumotlarni localStorage'da saqlash
             localStorage.setItem('userData', JSON.stringify(userData));
         }
 
         // Logout funksiyasi
         function logout() {
+            const logoutModal = new bootstrap.Modal(document.getElementById('logoutModal'));
+            logoutModal.show();
+        }
+
+        function confirmLogout() {
             localStorage.removeItem('authToken');
             localStorage.removeItem('userData');
+            const logoutModal = bootstrap.Modal.getInstance(document.getElementById('logoutModal'));
+            logoutModal.hide();
             window.location.href = 'login.html';
         }
 
@@ -539,7 +604,6 @@
             showLoading();
             hideError();
 
-            // LocalStorage dan token olish
             const AUTH_TOKEN = localStorage.getItem('authToken');
             
             if (!AUTH_TOKEN) {
@@ -560,7 +624,6 @@
 
                 if (!response.ok) {
                     if (response.status === 401) {
-                        // Token yaroqsiz yoki muddati o'tgan
                         localStorage.removeItem('authToken');
                         localStorage.removeItem('userData');
                         window.location.href = 'login.html';
@@ -570,8 +633,11 @@
                 }
 
                 const data = await response.json();
+                allData = data; // Global ma'lumotlarni saqlash
                 renderTable(data);
                 updateStatistics(data);
+                // 1-ish: Bo'lim filterini to'ldirish
+                populateDepartmentFilter(data);
                 hideLoading();
 
             } catch (error) {
@@ -579,6 +645,46 @@
                 showError('Ma\'lumotlarni yuklashda xatolik yuz berdi: ' + error.message);
                 hideLoading();
             }
+        }
+
+        // 1-ish: Bo'lim filterini to'ldirish
+        function populateDepartmentFilter(departments) {
+            const departmentFilter = document.getElementById('departmentFilter');
+            if (!departmentFilter) return;
+            
+            // Hozirgi option'larni saqlash
+            const currentValue = departmentFilter.value;
+            departmentFilter.innerHTML = `
+                <option value="">Bo'lim</option>
+                <option value="all">Barchasi</option>
+            `;
+            
+            departments.forEach(dept => {
+                const option = document.createElement('option');
+                option.value = dept.title;
+                option.textContent = dept.title;
+                departmentFilter.appendChild(option);
+            });
+            
+            // Agar oldin tanlangan bo'lim bo'lsa, uni tiklash
+            if (currentValue) {
+                departmentFilter.value = currentValue;
+            }
+        }
+
+        // 1-ish: Bo'lim bo'yicha filtrlash
+        function filterByDepartment(departmentTitle) {
+            currentDepartment = departmentTitle;
+            
+            if (!departmentTitle || departmentTitle === 'all') {
+                // Barcha ma'lumotlarni ko'rsatish
+                renderTable(allData);
+                return;
+            }
+            
+            // Faqat tanlangan bo'limni filtrlash
+            const filteredData = allData.filter(dept => dept.title === departmentTitle);
+            renderTable(filteredData);
         }
 
         // Statistikalarni yangilash
@@ -603,13 +709,12 @@
                     }
                 });
                 
-                // Taxminiy qiymatlar
                 totalFolders = totalCategories;
             }
 
             document.getElementById('departmentsCount').textContent = totalDepartments;
             document.getElementById('documentsCount').textContent = totalDocuments;
-            document.getElementById('employeesCount').textContent = '63'; // Statik qiymat
+            document.getElementById('employeesCount').textContent = '63';
             document.getElementById('foldersCount').textContent = totalFolders;
         }
 
@@ -674,11 +779,10 @@
                         `;
                         tableBody.appendChild(categoryRow);
 
-                        // Hujjatlar qatori (dastlab yashirin)
-                        createDocumentsRow(category);
+                        // Hujjatlar qatori
+                        createDocumentsRow(category, department.title);
                     });
                 } else {
-                    // Agar kategoriyalar bo'lmasa
                     const noCategoryRow = document.createElement('tr');
                     noCategoryRow.innerHTML = `
                         <td colspan="5" class="no-categories">
@@ -689,12 +793,11 @@
                 }
             });
             
-            // Collapse hodisasi uchun event listener qo'shish
             addCollapseEventListeners();
         }
 
-        // Hujjatlar qatorini yaratish
-        function createDocumentsRow(category) {
+        // Hujjatlar qatorini yaratish (3-ish uchun "Ko'rish" tugmasini qo'shish)
+        function createDocumentsRow(category, departmentTitle) {
             const docsRow = document.createElement('tr');
             docsRow.className = 'collapse';
             docsRow.id = `docs-${category.id}`;
@@ -707,9 +810,9 @@
                                 <thead>
                                     <tr>
                                         <th width="5%" class="text-center">№</th>
-                                        <th width="65%">Hujjat nomi</th>
+                                        <th width="45%">Hujjat nomi</th>
                                         <th width="15%" class="text-center">Fayl turi</th>
-                                        <th width="15%" class="text-center">Amallar</th>
+                                        <th width="35%" class="text-center">Amallar</th>
                                     </tr>
                                 </thead>
                                 <tbody>`;
@@ -732,9 +835,15 @@
                                 <span class="badge bg-secondary">${fileExtension}</span>
                             </td>
                             <td class="text-center">
-                                <button class="btn btn-primary btn-sm" onclick="downloadFile('${doc.file || ''}', '${doc.title || 'hujjat'}')" title="Yuklab olish" ${!doc.file ? 'disabled' : ''}>
-                                    <i class="fas fa-download me-1"></i> Yuklab olish
-                                </button>
+                                <div class="action-buttons">
+                                    <!-- 3-ish: "Ko'rish" tugmasi -->
+                                    <button class="btn btn-info btn-sm" onclick="viewDocument('${doc.id}', '${doc.title}', '${doc.file}', '${fileExtension}', '${departmentTitle}', '${category.tartib_raqami || ''}', '${doc.create_at || ''}')" title="Ko'rish">
+                                        <i class="fas fa-eye me-1"></i> Ko'rish
+                                    </button>
+                                    <button class="btn btn-primary btn-sm" onclick="downloadFile('${doc.file || ''}', '${doc.title || 'hujjat'}')" title="Yuklab olish" ${!doc.file ? 'disabled' : ''}>
+                                        <i class="fas fa-download me-1"></i> Yuklab olish
+                                    </button>
+                                </div>
                             </td>
                         </tr>`;
                 });
@@ -759,10 +868,111 @@
             tableBody.appendChild(docsRow);
         }
 
-        // Izoh matnini formatlash
-        function formatIzoh(izoh) {
-            if (!izoh) return '';
-            return izoh.replace(/\r\n/g, '<br>').replace(/\n/g, '<br>');
+        // 3-ish: Hujjatni ko'rish (modal oyna)
+        function viewDocument(docId, docTitle, fileUrl, fileType, department, category, createDate) {
+            modalDocumentData = {
+                id: docId,
+                title: docTitle,
+                fileUrl: fileUrl,
+                fileType: fileType,
+                department: department,
+                category: category,
+                createDate: createDate
+            };
+            
+            // Modal elementlarini to'ldirish
+            document.getElementById('modalDocumentTitle').textContent = docTitle;
+            document.getElementById('modalDocName').textContent = docTitle;
+            document.getElementById('modalFileType').textContent = fileType;
+            document.getElementById('modalCreateDate').textContent = createDate;
+            document.getElementById('modalDepartment').textContent = department;
+            document.getElementById('modalCategory').textContent = category;
+            document.getElementById('modalFileUrl').value = fileUrl;
+            
+            // Fayl kontentini yuklash
+            loadFileContent(fileUrl, fileType);
+            
+            // Modalni ochish
+            const modal = new bootstrap.Modal(document.getElementById('documentViewModal'));
+            modal.show();
+        }
+
+        // 3-ish: Fayl kontentini yuklash
+        async function loadFileContent(fileUrl, fileType) {
+            const contentElement = document.getElementById('modalFileContent');
+            
+            if (!fileUrl) {
+                contentElement.innerHTML = `
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Fayl manzili mavjud emas
+                    </div>`;
+                return;
+            }
+            
+            const fullUrl = 'https://backend-arxiv.tmsiti.uz' + fileUrl;
+            
+            // Fayl turiga qarab kontent ko'rsatish
+            if (fileType === 'PDF' || fileUrl.toLowerCase().endsWith('.pdf')) {
+                contentElement.innerHTML = `
+                    <iframe src="${fullUrl}" width="100%" height="500px" style="border: none;"></iframe>
+                    <p class="text-muted mt-2">PDF fayl yuklandi</p>`;
+            } else if (['JPG', 'JPEG', 'PNG', 'GIF'].includes(fileType) || 
+                       fileUrl.toLowerCase().match(/\.(jpg|jpeg|png|gif)$/)) {
+                contentElement.innerHTML = `
+                    <img src="${fullUrl}" alt="${modalDocumentData.title}" class="img-fluid" style="max-height: 500px;">
+                    <p class="text-muted mt-2">Rasm fayli yuklandi</p>`;
+            } else if (fileType === 'DOCX' || fileUrl.toLowerCase().endsWith('.docx')) {
+                contentElement.innerHTML = `
+                    <div class="alert alert-info">
+                        <i class="fas fa-file-word me-2"></i>
+                        Word hujjati. Yuklab olish uchun "Yuklab olish" tugmasini bosing.
+                    </div>
+                    <iframe src="https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(fullUrl)}" width="100%" height="500px" frameborder="0"></iframe>`;
+            } else {
+                contentElement.innerHTML = `
+                    <div class="alert alert-info">
+                        <i class="fas fa-file me-2"></i>
+                        Bu turdagi faylni to'g'ridan-to'g'ri ko'rish imkoni mavjud emas.
+                        <br>Faylni ko'rish uchun "Yuklab olish" tugmasini bosing.
+                    </div>`;
+            }
+        }
+
+        // 3-ish: Modal oynadan faylni yuklab olish
+        function downloadFromModal() {
+            if (!modalDocumentData.fileUrl) {
+                alert('Fayl manzili mavjud emas');
+                return;
+            }
+            
+            downloadFile(modalDocumentData.fileUrl, modalDocumentData.title);
+        }
+
+        // 3-ish: Faylni yangi oynada ochish
+        function openFileInNewTab() {
+            if (!modalDocumentData.fileUrl) {
+                alert('Fayl manzili mavjud emas');
+                return;
+            }
+            
+            const fullUrl = 'https://backend-arxiv.tmsiti.uz' + modalDocumentData.fileUrl;
+            window.open(fullUrl, '_blank');
+        }
+
+        // 3-ish: Fayl manzilini nusxalash
+        function copyFileUrl() {
+            const fileUrlInput = document.getElementById('modalFileUrl');
+            fileUrlInput.select();
+            fileUrlInput.setSelectionRange(0, 99999);
+            
+            try {
+                navigator.clipboard.writeText(fileUrlInput.value);
+                alert('Fayl manzili nusxalandi!');
+            } catch (err) {
+                console.error('Nusxalashda xatolik:', err);
+                alert('Nusxalash amalga oshmadi. Iltimos, qolda nusxalang.');
+            }
         }
 
         // Fayl ikonkasini aniqlash funksiyasi
@@ -789,16 +999,15 @@
                 return;
             }
             
-            // Simulyatsiya - haqiqiy ilovada faylni yuklab olish
-            alert(`"${fileName}" fayli yuklab olinmoqda...\nFayl manzili: ${filePath}`);
+            const fullUrl = 'https://backend-arxiv.tmsiti.uz' + filePath;
+            const link = document.createElement('a');
+            link.href = fullUrl;
+            link.download = fileName || 'hujjat';
+            link.target = '_blank';
             
-            // Haqiqiy yuklab olish uchun:
-            // const link = document.createElement('a');
-            // link.href = filePath;
-            // link.download = fileName;
-            // document.body.appendChild(link);
-            // link.click();
-            // document.body.removeChild(link);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
         }
 
         // Collapse hodisalari uchun event listener
@@ -818,42 +1027,100 @@
             });
         }
 
-        // Qidiruv funksiyasi
+        // 2-ish: Global qidiruv funksiyasi (barcha ma'lumotlar bo'yicha)
         function setupSearch() {
             const searchInput = document.getElementById('globalSearch');
             searchInput.addEventListener('input', function(e) {
-                const searchTerm = e.target.value.toLowerCase();
-                const rows = document.querySelectorAll('.category-row');
-                let visibleCount = 0;
+                const searchTerm = e.target.value.toLowerCase().trim();
                 
-                rows.forEach(row => {
-                    const text = row.textContent.toLowerCase();
-                    if (text.includes(searchTerm)) {
-                        row.style.display = '';
-                        visibleCount++;
+                if (searchTerm === '') {
+                    // Agar qidiruv bo'sh bo'lsa, filtrlangan ma'lumotlarni qaytarish
+                    if (currentDepartment && currentDepartment !== 'all') {
+                        filterByDepartment(currentDepartment);
                     } else {
-                        row.style.display = 'none';
+                        renderTable(allData);
                     }
-                });
+                    return;
+                }
                 
-                // Agar hech narsa topilmasa
-                if (visibleCount === 0 && searchTerm !== '') {
-                    tableBody.innerHTML = `
-                        <tr>
-                            <td colspan="5" class="text-center text-muted">
-                                <i class="fas fa-search me-2"></i>"${searchTerm}" so'zi bo'yicha hech narsa topilmadi
-                            </td>
-                        </tr>
-                    `;
+                // 2-ish: Qidiruvni bajarish
+                performGlobalSearch(searchTerm);
+            });
+        }
+
+        // 2-ish: Global qidiruvni amalga oshirish
+        function performGlobalSearch(searchTerm) {
+            const filteredData = [];
+            
+            allData.forEach(department => {
+                // Bo'lim sarlavhasi bo'yicha qidirish
+                const deptMatches = department.title.toLowerCase().includes(searchTerm);
+                
+                // Kategoriyalarni filtrlash
+                const filteredCategories = [];
+                if (department.categories && department.categories.length > 0) {
+                    department.categories.forEach(category => {
+                        const categoryMatches = 
+                            (category.ichki_raqam && category.ichki_raqam.toLowerCase().includes(searchTerm)) ||
+                            (category.tartib_raqami && category.tartib_raqami.toLowerCase().includes(searchTerm)) ||
+                            (category.izoh && category.izoh.toLowerCase().includes(searchTerm));
+                        
+                        // Hujjatlarni filtrlash
+                        let filteredDocs = [];
+                        if (category.docs && category.docs.length > 0) {
+                            filteredDocs = category.docs.filter(doc => 
+                                (doc.title && doc.title.toLowerCase().includes(searchTerm)) ||
+                                (doc.create_at && doc.create_at.toLowerCase().includes(searchTerm))
+                            );
+                        }
+                        
+                        // Agar kategoriya yoki uning hujjatlari mos kelsa
+                        if (categoryMatches || filteredDocs.length > 0) {
+                            const filteredCategory = { ...category };
+                            if (filteredDocs.length > 0) {
+                                filteredCategory.docs = filteredDocs;
+                            }
+                            filteredCategories.push(filteredCategory);
+                        }
+                    });
+                }
+                
+                // Agar bo'lim yoki uning kategoriyalari mos kelsa
+                if (deptMatches || filteredCategories.length > 0) {
+                    const filteredDept = { ...department };
+                    if (filteredCategories.length > 0) {
+                        filteredDept.categories = filteredCategories;
+                    }
+                    filteredData.push(filteredDept);
                 }
             });
+            
+            // Natijalarni chizish
+            if (filteredData.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="text-center text-muted">
+                            <i class="fas fa-search me-2"></i>"${searchTerm}" so'zi bo'yicha hech narsa topilmadi
+                        </td>
+                    </tr>
+                `;
+            } else {
+                renderTable(filteredData);
+            }
         }
 
         // Filtrlash funksiyasi
         function applyFilters() {
-            // Filtrlash logikasi
-            console.log('Filtrlash amalga oshirildi');
-            // Bu yerda haqiqiy filtrlash logikasi qo'shishingiz mumkin
+            const docType = document.getElementById('documentTypeFilter').value;
+            const dateFilter = document.getElementById('dateFilter').value;
+            
+            console.log('Filtrlash amalga oshirildi:', {
+                department: currentDepartment,
+                documentType: docType,
+                dateFilter: dateFilter
+            });
+            
+            alert('Filtrlash funksiyasi ishga tushdi!');
         }
 
         // Yuklanish ko'rsatkichini ko'rsatish/yashirish
@@ -881,6 +1148,12 @@
         // Yangilash tugmasi
         function refreshData() {
             populateTable();
+        }
+        
+        // Izoh matnini formatlash
+        function formatIzoh(izoh) {
+            if (!izoh) return '';
+            return izoh.replace(/\r\n/g, '<br>').replace(/\n/g, '<br>');
         }
     </script>
 </body>
