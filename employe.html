@@ -271,6 +271,31 @@
         .category-row + .documents-row {
             border-top: 2px solid #dee2e6;
         }
+
+        .document-preview-container {
+            min-height: 380px;
+            max-height: 70vh;
+            overflow: auto;
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 12px;
+        }
+
+        .document-preview-frame {
+            width: 100%;
+            height: 60vh;
+            border: none;
+            border-radius: 6px;
+            background: #fff;
+        }
+
+        .document-preview-image {
+            max-width: 100%;
+            max-height: 60vh;
+            object-fit: contain;
+            border-radius: 6px;
+        }
     </style>
 </head>
 
@@ -686,6 +711,58 @@
         </div>
     </div>
 
+    <!-- Document View Modal -->
+    <div class="modal fade" id="documentViewModal" tabindex="-1" aria-labelledby="documentViewModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="documentViewModalLabel">
+                        <i class="fas fa-file-alt text-primary me-2"></i>
+                        <span id="modalDocumentTitle">Hujjatni ko'rish</span>
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <div><strong>Hujjat nomi:</strong> <span id="modalDocName">-</span></div>
+                            <div><strong>Fayl turi:</strong> <span id="modalFileType">-</span></div>
+                            <div><strong>Yaratilgan sana:</strong> <span id="modalCreateDate">-</span></div>
+                            <div><strong>Bo'lim:</strong> <span id="modalDepartment">-</span></div>
+                            <div><strong>Kategoriya:</strong> <span id="modalCategory">-</span></div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="modalFileUrl" class="form-label"><strong>Fayl manzili:</strong></label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="modalFileUrl" readonly>
+                                <button type="button" class="btn btn-outline-secondary" onclick="copyFileUrl()">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                            </div>
+                            <div class="d-flex gap-2 mt-2">
+                                <button type="button" class="btn btn-primary btn-sm" onclick="downloadFromModal()">
+                                    <i class="fas fa-download me-1"></i>Yuklab olish
+                                </button>
+                                <button type="button" class="btn btn-outline-primary btn-sm" onclick="openFileInNewTab()">
+                                    <i class="fas fa-external-link-alt me-1"></i>Yangi oynada ochish
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="document-preview-container">
+                        <div id="modalFileContent" class="text-center text-muted p-4">
+                            <div class="spinner-border text-primary" role="status"></div>
+                            <p class="mt-2 mb-0">Fayl yuklanmoqda...</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Yopish</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!--**********************************
         Scripts
     ***********************************-->
@@ -725,6 +802,7 @@
     let deleteType = ''; // 'category' or 'document'
     let deleteId = null;
     let bigCategories = [];
+    let currentViewedDocument = null;
 
     // Authentication va ma'lumotlarni yuklash
     document.addEventListener('DOMContentLoaded', function() {
@@ -1155,8 +1233,7 @@
                         </td>
                         <td class="wspace-no">${category.ichki_raqam || 'N/A'}</td>
                         <td>
-                            <span class="big-category-name">${department.title}</span>
-                            ${category.tartib_raqami || 'N/A'}
+                            <span class="big-category-name" style="color: #0d6efd;">${category.tartib_raqami || 'N/A'}</span>
                         </td>
                         <td class="text-ov">${formatIzoh(category.izoh)}</td>
                         <td>
@@ -1176,7 +1253,7 @@
                     tableBody.appendChild(categoryRow);
 
                     // Hujjatlar qatori
-                    createDocumentsRow(category);
+                    createDocumentsRow(category, department.title);
                 });
             } else {
                 const noCategoryRow = document.createElement('tr');
@@ -1302,7 +1379,7 @@
     }
 
     // Hujjatlar qatorini yaratish
-    function createDocumentsRow(category) {
+    function createDocumentsRow(category, departmentTitle) {
         const docsRow = document.createElement('tr');
         docsRow.className = 'documents-row collapse';
         docsRow.id = `docs-${category.id}`;
@@ -1333,6 +1410,7 @@
         if (category.docs && category.docs.length > 0) {
             category.docs.forEach((doc, index) => {
                 const fileExtension = doc.file ? doc.file.split('.').pop().toUpperCase() : 'NOMA\'LUM';
+                const fileType = fileExtension.toLowerCase();
                 const fileIcon = getFileIcon(fileExtension);
                 
                 docsContent += `
@@ -1341,7 +1419,9 @@
                         <td>
                             <div class="d-flex align-items-center">
                                 <i class="fas fa-file-${fileIcon} me-2 text-primary"></i>
-                                <span>${doc.title || 'Nomsiz hujjat'}</span>
+                                ${doc.file
+                                    ? `<a href="javascript:void(0);" class="document-download-link" data-file-url="${doc.file}" data-file-name="${doc.title || 'hujjat'}">${doc.title || 'Nomsiz hujjat'}</a>`
+                                    : `<span>${doc.title || 'Nomsiz hujjat'}</span>`}
                             </div>
                         </td>
                         <td class="text-center">
@@ -1352,6 +1432,18 @@
                         </td>
                         <td class="text-center">
                             <div class="action-buttons">
+                                <button class="btn btn-info btn-sm text-white view-document-btn"
+                                        data-document-id="${doc.id}"
+                                        data-title="${doc.title || 'Nomsiz hujjat'}"
+                                        data-file-url="${doc.file || ''}"
+                                        data-file-type="${fileType}"
+                                        data-department-name="${departmentTitle || ''}"
+                                        data-category-name="${category.tartib_raqami || ''}"
+                                        data-create-at="${doc.create_at || '-'}"
+                                        title="Ko'rish"
+                                        ${!doc.file ? 'disabled' : ''}>
+                                    <i class="fas fa-eye"></i>
+                                </button>
                                 <button class="btn btn-primary btn-sm download-btn" data-file-url="${doc.file || ''}" data-file-name="${doc.title || 'hujjat'}" title="Yuklab olish" ${!doc.file ? 'disabled' : ''}>
                                     <i class="fas fa-download"></i>
                                 </button>
@@ -1449,6 +1541,21 @@
             });
         });
 
+        // Hujjatni modalda ko'rish
+        document.querySelectorAll('.view-document-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const docId = this.getAttribute('data-document-id');
+                const docTitle = this.getAttribute('data-title');
+                const fileUrl = this.getAttribute('data-file-url');
+                const fileType = this.getAttribute('data-file-type');
+                const department = this.getAttribute('data-department-name');
+                const category = this.getAttribute('data-category-name');
+                const createDate = this.getAttribute('data-create-at');
+
+                viewDocument(docId, docTitle, fileUrl, fileType, department, category, createDate);
+            });
+        });
+
         // Hujjat tahrirlash
         document.querySelectorAll('.edit-document-btn').forEach(button => {
             button.addEventListener('click', function() {
@@ -1468,6 +1575,16 @@
         // Fayl yuklab olish
         document.querySelectorAll('.download-btn').forEach(button => {
             button.addEventListener('click', function() {
+                const fileUrl = this.getAttribute('data-file-url');
+                const fileName = this.getAttribute('data-file-name');
+                downloadFile(fileUrl, fileName);
+            });
+        });
+
+        // Hujjat nomini bosib ham yuklab olish
+        document.querySelectorAll('.document-download-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
                 const fileUrl = this.getAttribute('data-file-url');
                 const fileName = this.getAttribute('data-file-name');
                 downloadFile(fileUrl, fileName);
@@ -1886,17 +2003,157 @@ async function confirmDelete() {
         showNotification('O\'chirishda xatolik yuz berdi: ' + error.message, 'error');
     }
 }
+    function viewDocument(docId, docTitle, fileUrl, fileType, department, category, createDate) {
+        currentViewedDocument = {
+            id: docId,
+            title: docTitle || 'Nomsiz hujjat',
+            fileUrl: fileUrl || '',
+            fileType: (fileType || '').toLowerCase(),
+            department: department || '-',
+            category: category || '-',
+            createDate: createDate || '-'
+        };
+
+        document.getElementById('modalDocumentTitle').textContent = currentViewedDocument.title;
+        document.getElementById('modalDocName').textContent = currentViewedDocument.title;
+        document.getElementById('modalFileType').textContent = (currentViewedDocument.fileType || '-').toUpperCase();
+        document.getElementById('modalCreateDate').textContent = currentViewedDocument.createDate;
+        document.getElementById('modalDepartment').textContent = currentViewedDocument.department;
+        document.getElementById('modalCategory').textContent = currentViewedDocument.category;
+        document.getElementById('modalFileUrl').value = currentViewedDocument.fileUrl ? normalizeFileUrl(currentViewedDocument.fileUrl) : '';
+
+        loadFileContent(currentViewedDocument.fileUrl, currentViewedDocument.fileType);
+
+        const modalElement = document.getElementById('documentViewModal');
+        const modal = bootstrap.Modal.getOrCreateInstance(modalElement);
+        modal.show();
+    }
+
+    function loadFileContent(fileUrl, fileType) {
+        const contentElement = document.getElementById('modalFileContent');
+        if (!contentElement) return;
+
+        if (!fileUrl) {
+            contentElement.innerHTML = `
+                <div class="alert alert-warning mb-0">
+                    Fayl manzili mavjud emas.
+                </div>
+            `;
+            return;
+        }
+
+        const fullUrl = normalizeFileUrl(fileUrl);
+        const lowerUrl = fullUrl.toLowerCase();
+        const ext = (fileType || '').toLowerCase();
+
+        if (ext === 'pdf' || lowerUrl.endsWith('.pdf')) {
+            contentElement.innerHTML = `
+                <iframe src="${fullUrl}" class="document-preview-frame"></iframe>
+            `;
+            return;
+        }
+
+        if (['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp'].includes(ext) || lowerUrl.match(/\.(jpg|jpeg|png|gif|webp|bmp)$/)) {
+            contentElement.innerHTML = `
+                <img src="${fullUrl}" alt="Document preview" class="document-preview-image" />
+            `;
+            return;
+        }
+
+        if (['doc', 'docx'].includes(ext) || lowerUrl.match(/\.(doc|docx)$/)) {
+            contentElement.innerHTML = `
+                <div class="alert alert-info">
+                    Word hujjati preview uchun Office Viewer orqali ochildi.
+                </div>
+                <iframe src="https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(fullUrl)}" class="document-preview-frame"></iframe>
+            `;
+            return;
+        }
+
+        contentElement.innerHTML = `
+            <div class="alert alert-info mb-0">
+                Bu turdagi faylni to'g'ridan-to'g'ri ko'rish imkoni yo'q. "Yuklab olish" tugmasidan foydalaning.
+            </div>
+        `;
+    }
+
+    function downloadFromModal() {
+        if (!currentViewedDocument || !currentViewedDocument.fileUrl) {
+            showNotification('Fayl manzili mavjud emas', 'warning');
+            return;
+        }
+
+        const extension = currentViewedDocument.fileType && currentViewedDocument.fileType !== 'noma\'lum'
+            ? `.${currentViewedDocument.fileType}`
+            : '';
+        downloadFile(currentViewedDocument.fileUrl, `${currentViewedDocument.title}${extension}`);
+    }
+
+    function openFileInNewTab() {
+        if (!currentViewedDocument || !currentViewedDocument.fileUrl) {
+            showNotification('Fayl manzili mavjud emas', 'warning');
+            return;
+        }
+
+        window.open(normalizeFileUrl(currentViewedDocument.fileUrl), '_blank', 'noopener,noreferrer');
+    }
+
+    async function copyFileUrl() {
+        const fileUrlInput = document.getElementById('modalFileUrl');
+        if (!fileUrlInput || !fileUrlInput.value) {
+            showNotification('Nusxalash uchun fayl manzili yo\'q', 'warning');
+            return;
+        }
+
+        try {
+            await navigator.clipboard.writeText(fileUrlInput.value);
+            showNotification('Fayl manzili nusxalandi', 'success');
+        } catch (error) {
+            console.error('Nusxalashda xatolik:', error);
+            showNotification('Nusxalash amalga oshmadi', 'error');
+        }
+    }
+
+    document.getElementById('documentViewModal').addEventListener('hidden.bs.modal', function () {
+        const contentElement = document.getElementById('modalFileContent');
+        if (contentElement) {
+            contentElement.innerHTML = `
+                <div class="text-center text-muted p-4">
+                    <div class="spinner-border text-primary" role="status"></div>
+                    <p class="mt-2 mb-0">Fayl yuklanmoqda...</p>
+                </div>
+            `;
+        }
+        currentViewedDocument = null;
+    });
+
+    function normalizeFileUrl(filePath) {
+        if (!filePath) return '';
+
+        try {
+            const backendOrigin = new URL(API_BASE_URL).origin + '/';
+            return new URL(filePath, backendOrigin).toString();
+        } catch (error) {
+            console.error('Fayl URL formatida xatolik:', error);
+            return filePath;
+        }
+    }
+
     // Faylni yuklab olish funksiyasi
     function downloadFile(filePath, fileName) {
         if (!filePath) {
             alert('Fayl manzili mavjud emas');
             return;
         }
-        
+
+        const normalizedUrl = normalizeFileUrl(filePath);
+
         // Haqiqiy yuklab olish
         const link = document.createElement('a');
-        link.href = filePath;
-        link.download = fileName;
+        link.href = normalizedUrl;
+        link.download = fileName || '';
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
